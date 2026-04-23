@@ -1,159 +1,46 @@
-:root {
-  --primary: #00ffa3; /* Neon yashil - pul va o'sish rangi */
-  --bg-dark: #0a0c10;
-  --panel-bg: rgba(255, 255, 255, 0.05);
-  --text-main: #ffffff;
-  --text-muted: #94a3b8;
-  --font-main: 'Manrope', sans-serif;
-  --font-heading: 'Space Grotesk', sans-serif;
-}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyMap - PulPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-auth">
+    <div class="bg-layer"></div>
+    <div class="bg-flare flare-auth-a"></div>
+    <div class="bg-flare flare-auth-b"></div>
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+    <main class="auth-wrap">
+        <section class="auth-panel premium-panel">
+            <div class="panel-top">
+                <p class="logo-pill">MoneyMap</p>
+                <div class="lang-box vivid">
+                    <select id="languageSelect">
+                        <option value="uz">O'zbekcha</option>
+                        <option value="en">English</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                </div>
+            </div>
 
-body {
-  font-family: var(--font-main);
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
+            <h1 data-i18n="login.title">Xarajatlarni boshqarish endi oson</h1>
+            <p class="auth-subtitle" data-i18n="login.subtitle">Ismingizni kiriting va boshlang.</p>
 
-/* Orqa fondagi effektlar (Flares) */
-.bg-layer {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, #111827 0%, #000 100%);
-  z-index: -2;
-}
+            <form id="loginForm" class="auth-form">
+                <label for="usernameInput">Ismingiz</label>
+                <div class="input-shell">
+                    <input id="usernameInput" type="text" placeholder="Masalan: Mirzobek" required autocomplete="off">
+                </div>
+                <button type="submit" class="glow-btn">Kirish</button>
+            </form>
+        </section>
+    </main>
 
-.bg-flare {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  filter: blur(100px);
-  border-radius: 50%;
-  z-index: -1;
-  opacity: 0.4;
-}
-
-.flare-auth-a {
-  background: var(--primary);
-  top: -100px;
-  left: -100px;
-}
-
-.flare-auth-b {
-  background: #3b82f6;
-  bottom: -100px;
-  right: -100px;
-}
-
-/* Panel dizayni */
-.auth-panel {
-  background: var(--panel-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 40px;
-  border-radius: 32px;
-  width: 100%;
-  max-width: 450px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.panel-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.logo-pill {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  background: var(--primary);
-  color: #000;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
-h1 {
-  font-family: var(--font-heading);
-  font-size: 2rem;
-  line-height: 1.2;
-  margin-bottom: 12px;
-}
-
-.auth-subtitle {
-  color: var(--text-muted);
-  margin-bottom: 30px;
-  font-size: 0.95rem;
-}
-
-/* Input dizayni */
-.auth-form label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.input-shell {
-  margin-bottom: 20px;
-}
-
-input[type="text"] {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 15px 20px;
-  border-radius: 12px;
-  color: white;
-  font-family: var(--font-main);
-  transition: 0.3s;
-}
-
-input[type="text"]:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* Tugma dizayni */
-.glow-btn {
-  width: 100%;
-  background: var(--primary);
-  color: #000;
-  border: none;
-  padding: 15px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-family: var(--font-main);
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 0 20px rgba(0, 255, 163, 0.3);
-}
-
-.glow-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(0, 255, 163, 0.5);
-}
-
-/* Til tanlash */
-.lang-box select {
-  background: transparent;
-  color: white;
-  border: none;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.hidden { display: none; }
+    <script src="js/core.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>
