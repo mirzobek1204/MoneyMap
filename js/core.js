@@ -1,100 +1,65 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Avtorizatsiyani tekshirish (Agar login qilmagan bo'lsa, index.html ga haydaydi)
-    const user = window.PulPulse.requireAuth();
-    if (!user) return;
+window.PulPulse = (() => {
+  const state = {
+    user: localStorage.getItem("pp_user") || null,
+    language: localStorage.getItem("pp_lang") || "uz",
+  };
 
-    // 2. Sahifadagi barcha matnlarni tarjima qilish
-    window.PulPulse.applyI18n();
-    window.PulPulse.bindLanguageSelect(document.getElementById('languageSelect'));
+  const translations = {
+    uz: { "app.name": "MoneyMap", "dashboard.welcome": "Xush kelibsiz, {{name}}!", "toast.saved": "Saqlandi!" },
+    ru: { "app.name": "MoneyMap", "dashboard.welcome": "Добро пожаловать, {{name}}!", "toast.saved": "Сохранено!" },
+    en: { "app.name": "MoneyMap", "dashboard.welcome": "Welcome, {{name}}!", "toast.saved": "Saved!" }
+  };
 
-    // 3. UI elementlarini yangilash funksiyasi
-    const updateUI = () => {
-        const stats = window.PulPulse.getStats(user);
-        const budget = window.PulPulse.getBudget(user);
-        const insight = window.PulPulse.getInsight(user);
-        const challenge = window.PulPulse.getChallenge(user);
-
-        // Statistikani kartochkalarga chiqarish
-        document.getElementById('todayExpense').textContent = window.PulPulse.formatCurrency(stats.today);
-        document.getElementById('monthExpense').textContent = window.PulPulse.formatCurrency(stats.month);
-        document.getElementById('totalExpense').textContent = window.PulPulse.formatCurrency(stats.total);
-
-        // Budget ma'lumotlari
-        const budgetStatus = document.getElementById('budgetStatus');
-        if (budget > 0) {
-            const left = budget - stats.month;
-            budgetStatus.textContent = left >= 0 
-                ? `Qolgan budget: ${window.PulPulse.formatCurrency(left)}` 
-                : `Limitdan oshdi: ${window.PulPulse.formatCurrency(Math.abs(left))}`;
-        } else {
-            budgetStatus.textContent = "Budget belgilanmagan";
-        }
-
-        // Insight va Challenge
-        document.getElementById('insightText').textContent = insight;
-        document.getElementById('challengeText').textContent = challenge;
-
-        // Xarajatlar ro'yxatini chiqarish (Jadval)
-        renderExpenses();
-    };
-
-    // 4. Xarajatlarni jadvalga chiqarish
-    const renderExpenses = () => {
-        const expenses = window.PulPulse.getExpenses(user);
-        const container = document.getElementById('expenseList');
-        if (!container) return;
-
-        container.innerHTML = expenses.reverse().map(exp => `
-            <div class="expense-item">
-                <div class="info">
-                    <strong>${window.PulPulse.t('category.' + exp.category)}</strong>
-                    <span>${exp.note || 'Izoh yo\'q'}</span>
-                    <small>${exp.date}</small>
-                </div>
-                <div class="amount">
-                    <span>-${window.PulPulse.formatCurrency(exp.amount)}</span>
-                    <button onclick="deleteExp('${exp.id}')">×</button>
-                </div>
-            </div>
-        `).join('');
-    };
-
-    // 5. Yangi xarajat qo'shish
-    const expenseForm = document.getElementById('expenseForm');
-    if (expenseForm) {
-        expenseForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const amount = document.getElementById('amountInput').value;
-            const category = document.getElementById('categorySelect').value;
-            const note = document.getElementById('noteInput').value;
-
-            window.PulPulse.addExpense(user, {
-                date: window.PulPulse.todayIso(),
-                amount: amount,
-                category: category,
-                note: note
-            });
-
-            window.PulPulse.showToast(window.PulPulse.t('toast.saved'));
-            expenseForm.reset();
-            updateUI();
+  return {
+    state,
+    t: (key, params = {}) => {
+        let text = translations[state.language][key] || key;
+        Object.keys(params).forEach(p => text = text.replace(`{{${p}}}`, params[p]));
+        return text;
+    },
+    requireAuth: () => {
+        if (!state.user) location.href = "index.html";
+        return state.user;
+    },
+    setCurrentUser: (name) => {
+        state.user = name;
+        localStorage.setItem("pp_user", name);
+    },
+    getCurrentUser: () => state.user,
+    logout: () => {
+        localStorage.removeItem("pp_user");
+        location.href = "index.html";
+    },
+    todayIso: () => new Date().toISOString().split('T')[0],
+    formatCurrency: (num) => new Intl.NumberFormat(state.language === 'uz' ? 'uz-UZ' : 'en-US').format(num) + " so'm",
+    getExpenses: (u) => JSON.parse(localStorage.getItem(`pp_exp_${u}`) || "[]"),
+    addExpense: (u, data) => {
+        const exps = JSON.parse(localStorage.getItem(`pp_exp_${u}`) || "[]");
+        exps.push({ id: Date.now().toString(), ...data });
+        localStorage.setItem(`pp_exp_${u}`, JSON.stringify(exps));
+    },
+    deleteExpense: (u, id) => {
+        const exps = JSON.parse(localStorage.getItem(`pp_exp_${u}`) || "[]");
+        localStorage.setItem(`pp_exp_${u}`, JSON.stringify(exps.filter(e => e.id !== id)));
+    },
+    getStats: (u) => {
+        const exps = JSON.parse(localStorage.getItem(`pp_exp_${u}`) || "[]");
+        const today = new Date().toISOString().split('T')[0];
+        return {
+            today: exps.filter(e => e.date === today).reduce((s, e) => s + Number(e.amount), 0),
+            total: exps.reduce((s, e) => s + Number(e.amount), 0)
+        };
+    },
+    applyI18n: () => { /* Tarjima mantiqi */ },
+    showToast: (msg) => alert(msg), // Vaqtincha oddiy alert
+    bindLanguageSelect: (el) => {
+        if (!el) return;
+        el.value = state.language;
+        el.addEventListener("change", (e) => {
+            state.language = e.target.value;
+            localStorage.setItem("pp_lang", e.target.value);
+            location.reload();
         });
     }
-
-    // 6. O'chirish funksiyasini global qilish
-    window.deleteExp = (id) => {
-        if (confirm(window.PulPulse.t('danger.confirm'))) {
-            window.PulPulse.deleteExpense(user, id);
-            window.PulPulse.showToast(window.PulPulse.t('toast.deleted'));
-            updateUI();
-        }
-    };
-
-    // Logout tugmasi
-    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-        window.PulPulse.logout();
-    });
-
-    // Sahifa yuklanganda UI ni yangilash
-    updateUI();
-});
+  };
+})();
