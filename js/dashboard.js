@@ -1,8 +1,11 @@
 (() => {
   const app = window.PulPulse;
+  
+  // 1. Avtorizatsiyani tekshirish
   const user = app.requireAuth();
   if (!user) return;
 
+  // 2. UI elementlarini xavfsiz tanlash
   const els = {
     languageSelect: document.getElementById("languageSelect"),
     logoutBtn: document.getElementById("logoutBtn"),
@@ -30,19 +33,21 @@
     mobileSwitchMenu: document.getElementById("mobileSwitchMenu"),
   };
 
-  app.bindLanguageSelect(els.languageSelect);
+  // 3. Init
+  if (els.languageSelect) app.bindLanguageSelect(els.languageSelect);
   app.applyI18n();
   bindEvents();
   render();
 
+  // Til o'zgarganda qayta chizish
   document.addEventListener("pulpulse:lang", render);
 
   function bindEvents() {
-    els.logoutBtn.addEventListener("click", app.logout);
-    if (els.mobileLogoutBtn) {
-      els.mobileLogoutBtn.addEventListener("click", app.logout);
-    }
+    // Logout funksiyalari
+    els.logoutBtn?.addEventListener("click", () => app.logout());
+    els.mobileLogoutBtn?.addEventListener("click", () => app.logout());
 
+    // Mobil menyu logikasi
     if (els.mobileSwitchToggle && els.mobileSwitchMenu) {
       els.mobileSwitchToggle.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -50,13 +55,15 @@
       });
 
       document.addEventListener("click", (event) => {
-        if (els.mobileSwitchMenu.classList.contains("hidden")) return;
-        const inside = event.target.closest(".mobile-switch");
-        if (!inside) els.mobileSwitchMenu.classList.add("hidden");
+        if (!els.mobileSwitchMenu.classList.contains("hidden")) {
+          const inside = event.target.closest(".mobile-switch");
+          if (!inside) els.mobileSwitchMenu.classList.add("hidden");
+        }
       });
     }
 
-    els.expenseForm.addEventListener("submit", (event) => {
+    // Xarajat qo'shish formasi
+    els.expenseForm?.addEventListener("submit", (event) => {
       event.preventDefault();
       const date = els.dateInput.value;
       const amount = Number(els.amountInput.value);
@@ -69,22 +76,26 @@
       }
 
       app.addExpense(user, { date, amount, category, note });
+      
+      // Formani tozalash
       els.amountInput.value = "";
       els.noteInput.value = "";
+      
       render();
       app.showToast(app.t("toast.saved"));
     });
 
-    els.expenseForm.addEventListener("click", (event) => {
+    // Tezkor summalar (Quick amounts)
+    els.expenseForm?.addEventListener("click", (event) => {
       const quick = event.target.closest("[data-quick]");
-      if (!quick) return;
-      const amount = Number(quick.dataset.quick);
-      if (!Number.isFinite(amount)) return;
-      els.amountInput.value = amount;
-      els.amountInput.focus();
+      if (quick && els.amountInput) {
+        els.amountInput.value = quick.dataset.quick;
+        els.amountInput.focus();
+      }
     });
 
-    els.saveBudgetBtn.addEventListener("click", () => {
+    // Budgetni saqlash
+    els.saveBudgetBtn?.addEventListener("click", () => {
       const value = Number(els.budgetInput.value);
       if (!Number.isFinite(value) || value < 0) {
         alert(app.t("budget.invalid"));
@@ -97,60 +108,110 @@
   }
 
   function render() {
+    // 1. Til va Salomlashish
     if (els.mobileSwitchToggle) {
       const map = { uz: "Bo'limlar", en: "Sections", ru: "Разделы" };
       els.mobileSwitchToggle.textContent = map[app.state.language] || "Sections";
     }
 
-    els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
-    els.dateInput.value = app.todayIso();
+    if (els.welcomeText) {
+      els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
+    }
+    
+    if (els.dateInput) els.dateInput.value = app.todayIso();
 
+    // 2. Statistika
     const stats = app.getStats(user);
-    els.todayTotal.textContent = app.formatCurrency(stats.today);
-    els.monthTotal.textContent = app.formatCurrency(stats.month);
-    els.allTotal.textContent = app.formatCurrency(stats.total);
+    if (els.todayTotal) els.todayTotal.textContent = app.formatCurrency(stats.today);
+    if (els.monthTotal) els.monthTotal.textContent = app.formatCurrency(stats.month);
+    if (els.allTotal) els.allTotal.textContent = app.formatCurrency(stats.total);
 
+    // 3. Challenge va Insight
     const challenge = app.getChallenge(user);
-    els.challengeText.textContent = `${app.t("dashboard.challengePrefix")} ${challenge}`;
+    if (els.challengeText) {
+      els.challengeText.textContent = `${app.t("dashboard.challengePrefix")} ${challenge}`;
+    }
+    
+    if (els.streakText) {
+      els.streakText.textContent = app.t("dashboard.streak", {
+        expense: String(app.getExpenseStreak(user)),
+        visit: String(app.getVisitStreak(user)),
+      });
+    }
 
+    if (els.insightText) {
+      els.insightText.textContent = app.getInsight(user);
+    }
+
+    // 4. Budget vizualizatsiyasi
     const budget = app.getBudget(user);
-    els.budgetInput.value = budget > 0 ? String(budget) : "";
+    if (els.budgetInput) els.budgetInput.value = budget > 0 ? String(budget) : "";
+    
     const progress = budget > 0 ? (stats.month / budget) * 100 : 0;
-    els.budgetBar.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
-    els.budgetBar.style.background = progress > 100
-      ? "linear-gradient(90deg,#ef4444,#dc2626)"
-      : progress > 85
-        ? "linear-gradient(90deg,#f59e0b,#ea580c)"
-        : "linear-gradient(90deg,#22c55e,#16a34a)";
-
-    els.budgetUsedText.textContent = app.t("budget.used", { amount: app.formatCurrency(stats.month) });
-    if (budget <= 0) {
-      els.budgetLeftText.textContent = app.t("budget.unset");
-    } else if (stats.month <= budget) {
-      els.budgetLeftText.textContent = app.t("budget.left", { amount: app.formatCurrency(budget - stats.month) });
-    } else {
-      els.budgetLeftText.textContent = app.t("budget.over", { amount: app.formatCurrency(stats.month - budget) });
+    if (els.budgetBar) {
+      els.budgetBar.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
+      els.budgetBar.style.background = progress > 100
+        ? "linear-gradient(90deg,#ef4444,#dc2626)"
+        : progress > 85
+          ? "linear-gradient(90deg,#f59e0b,#ea580c)"
+          : "linear-gradient(90deg,#22c55e,#16a34a)";
     }
 
-    els.streakText.textContent = app.t("dashboard.streak", {
-      expense: String(app.getExpenseStreak(user)),
-      visit: String(app.getVisitStreak(user)),
-    });
-    els.insightText.textContent = app.getInsight(user);
+    if (els.budgetUsedText) {
+      els.budgetUsedText.textContent = app.t("budget.used", { amount: app.formatCurrency(stats.month) });
+    }
 
-    const recent = [...app.getExpenses(user)].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+    if (els.budgetLeftText) {
+      if (budget <= 0) {
+        els.budgetLeftText.textContent = app.t("budget.unset");
+      } else if (stats.month <= budget) {
+        els.budgetLeftText.textContent = app.t("budget.left", { amount: app.formatCurrency(budget - stats.month) });
+      } else {
+        els.budgetLeftText.textContent = app.t("budget.over", { amount: app.formatCurrency(stats.month - budget) });
+      }
+    }
+
+    // 5. Oxirgi amallar jadvali (O'chirish tugmasi bilan)
+    renderRecentTransactions(user);
+  }
+
+  function renderRecentTransactions(user) {
+    if (!els.recentBody) return;
+
+    const recent = [...app.getExpenses(user)]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 8);
+
     els.recentBody.innerHTML = "";
-    els.recentEmpty.textContent = recent.length ? "" : app.t("expenses.empty");
-
-    for (const item of recent) {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${item.date}</td>
-        <td>${app.t(`category.${item.category}`)}</td>
-        <td>${app.formatCurrency(item.amount)}</td>
-        <td>${item.note || "-"}</td>
-      `;
-      els.recentBody.appendChild(row);
+    if (els.recentEmpty) {
+        els.recentEmpty.textContent = recent.length ? "" : app.t("expenses.empty");
     }
+
+    recent.forEach(item => {
+      const row = document.createElement("tr");
+      row.className = "hover:bg-gray-50 transition-colors";
+      row.innerHTML = `
+        <td class="px-4 py-3 text-sm">${item.date}</td>
+        <td class="px-4 py-3 text-sm font-medium">${app.t(`category.${item.category}`)}</td>
+        <td class="px-4 py-3 text-sm font-bold text-red-600">-${app.formatCurrency(item.amount)}</td>
+        <td class="px-4 py-3 text-sm text-gray-500">${item.note || "-"}</td>
+        <td class="px-4 py-3 text-right">
+          <button class="delete-btn p-1 hover:bg-red-100 rounded text-red-500 transition-colors" data-id="${item.id}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </td>
+      `;
+
+      // O'chirish hodisasi
+      row.querySelector(".delete-btn").addEventListener("click", () => {
+        if (confirm(app.t("danger.confirm") || "Ushbu amalni o'chirmoqchimisiz?")) {
+          app.deleteExpense(user, item.id);
+          render();
+          app.showToast(app.t("toast.deleted"));
+        }
+      });
+
+      els.recentBody.appendChild(row);
+    });
   }
 })();
