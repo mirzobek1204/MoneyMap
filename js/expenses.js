@@ -1,8 +1,11 @@
 (() => {
   const app = window.PulPulse;
+  
+  // 1. Avtorizatsiyani tekshirish
   const user = app.requireAuth();
   if (!user) return;
 
+  // 2. UI elementlarini xavfsiz tanlash (Null-check bilan)
   const els = {
     languageSelect: document.getElementById("languageSelect"),
     logoutBtn: document.getElementById("logoutBtn"),
@@ -22,19 +25,21 @@
 
   const filters = { fromDate: "", toDate: "", category: "" };
 
-  app.bindLanguageSelect(els.languageSelect);
+  // 3. Init
+  if (els.languageSelect) app.bindLanguageSelect(els.languageSelect);
   app.applyI18n();
   bindEvents();
   render();
 
+  // Til o'zgarganda sahifani yangilash
   document.addEventListener("pulpulse:lang", render);
 
   function bindEvents() {
-    els.logoutBtn.addEventListener("click", app.logout);
-    if (els.mobileLogoutBtn) {
-      els.mobileLogoutBtn.addEventListener("click", app.logout);
-    }
+    // Logoutlar
+    els.logoutBtn?.addEventListener("click", () => app.logout());
+    els.mobileLogoutBtn?.addEventListener("click", () => app.logout());
 
+    // Mobil menyu
     if (els.mobileSwitchToggle && els.mobileSwitchMenu) {
       els.mobileSwitchToggle.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -42,29 +47,37 @@
       });
 
       document.addEventListener("click", (event) => {
-        if (els.mobileSwitchMenu.classList.contains("hidden")) return;
-        const inside = event.target.closest(".mobile-switch");
-        if (!inside) els.mobileSwitchMenu.classList.add("hidden");
+        if (!els.mobileSwitchMenu.classList.contains("hidden")) {
+          const inside = event.target.closest(".mobile-switch");
+          if (!inside) els.mobileSwitchMenu.classList.add("hidden");
+        }
       });
     }
 
-    els.filterForm.addEventListener("submit", (event) => {
+    // Filtrni qo'llash
+    els.filterForm?.addEventListener("submit", (event) => {
       event.preventDefault();
-      filters.fromDate = els.fromDate.value;
-      filters.toDate = els.toDate.value;
-      filters.category = app.normalizeCategory(els.filterCategory.value);
+      filters.fromDate = els.fromDate?.value || "";
+      filters.toDate = els.toDate?.value || "";
+      filters.category = els.filterCategory ? app.normalizeCategory(els.filterCategory.value) : "";
       renderTable();
     });
 
-    els.tableBody.addEventListener("click", (event) => {
+    // Jadval ichidagi o'chirish tugmasi (Event Delegation)
+    els.tableBody?.addEventListener("click", (event) => {
       const btn = event.target.closest("[data-delete]");
       if (!btn) return;
-      app.deleteExpense(user, btn.dataset.delete);
-      render();
-      app.showToast(app.t("toast.deleted"));
+      
+      // O'chirishdan oldin tasdiqlash so'rash (Expert tavsiyasi)
+      if (confirm(app.t("danger.confirm") || "O'chirilsinmi?")) {
+        app.deleteExpense(user, btn.dataset.delete);
+        render(); // RenderTable emas, render chaqiriladi (to'liq UI yangilanishi uchun)
+        app.showToast(app.t("toast.deleted"));
+      }
     });
 
-    els.clearBtn.addEventListener("click", () => {
+    // Barcha ma'lumotlarni tozalash
+    els.clearBtn?.addEventListener("click", () => {
       if (!confirm(app.t("danger.confirm"))) return;
       app.clearCurrentUserData(user);
       render();
@@ -73,34 +86,60 @@
   }
 
   function render() {
+    // Mobil menyu matnini yangilash
     if (els.mobileSwitchToggle) {
       const map = { uz: "Bo'limlar", en: "Sections", ru: "Разделы" };
       els.mobileSwitchToggle.textContent = map[app.state.language] || "Sections";
     }
 
-    els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
+    if (els.welcomeText) {
+      els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
+    }
+    
     renderTable();
   }
 
   function renderTable() {
+    if (!els.tableBody) return;
+
     const rows = applyFilters(app.getExpenses(user));
+    
+    // Saralash: Birinchi sana bo'yicha, keyin yaratilgan vaqti bo'yicha (eng yangilari tepada)
     const sorted = [...rows].sort((a, b) => {
-      if (a.date === b.date) return b.createdAt.localeCompare(a.createdAt);
+      if (a.date === b.date) {
+          // core.js dacreatedAt bo'lsa shuni ishlatadi, aks holda id bo'yicha
+          return (b.createdAt || b.id).localeCompare(a.createdAt || a.id);
+      }
       return b.date.localeCompare(a.date);
     });
 
     els.tableBody.innerHTML = "";
-    els.filteredText.textContent = app.t("expenses.filtered", { amount: app.formatCurrency(sumBy(sorted)) });
-    els.emptyText.textContent = sorted.length ? "" : app.t("expenses.empty");
+    
+    if (els.filteredText) {
+        els.filteredText.textContent = app.t("expenses.filtered", { 
+            amount: app.formatCurrency(sumBy(sorted)) 
+        });
+    }
+
+    if (els.emptyText) {
+        els.emptyText.textContent = sorted.length ? "" : app.t("expenses.empty");
+    }
 
     for (const item of sorted) {
       const tr = document.createElement("tr");
+      tr.className = "border-b hover:bg-gray-50 transition-colors"; // Tailwind klasslari bo'lsa ishlaydi
       tr.innerHTML = `
-        <td>${item.date}</td>
-        <td>${app.t(`category.${item.category}`)}</td>
-        <td>${app.formatCurrency(item.amount)}</td>
-        <td>${item.note || "-"}</td>
-        <td><button class="danger mini" type="button" data-delete="${item.id}">${app.t("table.delete")}</button></td>
+        <td class="p-3">${item.date}</td>
+        <td class="p-3">${app.t(`category.${item.category}`)}</td>
+        <td class="p-3 font-bold text-red-600">-${app.formatCurrency(item.amount)}</td>
+        <td class="p-3 text-gray-500">${item.note || "-"}</td>
+        <td class="p-3 text-right">
+          <button class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs hover:bg-red-200" 
+                  type="button" 
+                  data-delete="${item.id}">
+            ${app.t("table.delete") || "Delete"}
+          </button>
+        </td>
       `;
       els.tableBody.appendChild(tr);
     }
