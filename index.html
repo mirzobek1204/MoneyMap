@@ -3,42 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoneyMap - PulPulse</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>MoneyMap - Login</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="page-auth">
-    <div class="bg-layer"></div>
-    <div class="bg-flare flare-auth-a"></div>
-    <div class="bg-flare flare-auth-b"></div>
+<body>
+    <div class="login-container">
+        <h1 data-i18n="app.name">MoneyMap</h1>
+        <form id="loginForm">
+            <input type="text" id="usernameInput" placeholder="Ismingizni kiriting" required>
+            <button type="submit">Kirish</button>
+        </form>
+        
+        <div id="continueArea" class="mt-4">
+            <p id="continueText"></p>
+            <button id="continueBtn" class="hidden">Davom etish</button>
+        </div>
 
-    <main class="auth-wrap">
-        <section class="auth-panel premium-panel">
-            <div class="panel-top">
-                <p class="logo-pill">MoneyMap</p>
-                <div class="lang-box vivid">
-                    <select id="languageSelect">
-                        <option value="uz">O'zbekcha</option>
-                        <option value="en">English</option>
-                        <option value="ru">Русский</option>
-                    </select>
-                </div>
-            </div>
-
-            <h1 data-i18n="login.title">Xarajatlarni boshqarish endi oson</h1>
-            <p class="auth-subtitle" data-i18n="login.subtitle">Ismingizni kiriting va boshlang.</p>
-
-            <form id="loginForm" class="auth-form">
-                <label for="usernameInput">Ismingiz</label>
-                <div class="input-shell">
-                    <input id="usernameInput" type="text" placeholder="Masalan: Mirzobek" required autocomplete="off">
-                </div>
-                <button type="submit" class="glow-btn">Kirish</button>
-            </form>
-        </section>
-    </main>
+        <select id="languageSelect">
+            <option value="uz">O'zbek</option>
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+        </select>
+    </div>
 
     <script src="js/core.js"></script>
     <script src="js/login.js"></script>
