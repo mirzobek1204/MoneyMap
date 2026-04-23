@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
@@ -88,17 +88,20 @@
 
       <section class="panel premium-panel care-zone">
         <h2 data-i18n="danger.title">Ma'lumotlarni Boshqarish</h2>
-        <p class="muted" data-i18n="danger.text">Faqat joriy user ma'lumotlari tozalanadi.</p>
+        <p class="muted" data-i18n="danger.text">Faqat joriy profil ma'lumotlari tozalanadi.</p>
         <button id="clearBtn" class="danger" type="button" data-i18n="danger.clear">Joriy profilni tozalash</button>
       </section>
     </main>
   </div>
 
-  <nav class="mobile-nav">
-    <a class="mobile-link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
-    <a class="mobile-link active" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
-    <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">Chiqish</button>
-  </nav>
+  <div class="mobile-switch">
+    <button id="mobileSwitchToggle" class="mobile-switch-toggle" type="button">Bo'limlar</button>
+    <div id="mobileSwitchMenu" class="mobile-switch-menu hidden">
+      <a class="mobile-link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+      <a class="mobile-link active" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
+      <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">Chiqish</button>
+    </div>
+  </div>
 
   <div id="toast" class="toast"></div>
 

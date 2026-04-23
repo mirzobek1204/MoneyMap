@@ -26,6 +26,8 @@
     recentBody: document.getElementById("recentBody"),
     recentEmpty: document.getElementById("recentEmpty"),
     mobileLogoutBtn: document.getElementById("mobileLogoutBtn"),
+    mobileSwitchToggle: document.getElementById("mobileSwitchToggle"),
+    mobileSwitchMenu: document.getElementById("mobileSwitchMenu"),
   };
 
   app.bindLanguageSelect(els.languageSelect);
@@ -39,6 +41,19 @@
     els.logoutBtn.addEventListener("click", app.logout);
     if (els.mobileLogoutBtn) {
       els.mobileLogoutBtn.addEventListener("click", app.logout);
+    }
+
+    if (els.mobileSwitchToggle && els.mobileSwitchMenu) {
+      els.mobileSwitchToggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        els.mobileSwitchMenu.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", (event) => {
+        if (els.mobileSwitchMenu.classList.contains("hidden")) return;
+        const inside = event.target.closest(".mobile-switch");
+        if (!inside) els.mobileSwitchMenu.classList.add("hidden");
+      });
     }
 
     els.expenseForm.addEventListener("submit", (event) => {
@@ -82,6 +97,11 @@
   }
 
   function render() {
+    if (els.mobileSwitchToggle) {
+      const map = { uz: "Bo'limlar", en: "Sections", ru: "Разделы" };
+      els.mobileSwitchToggle.textContent = map[app.state.language] || "Sections";
+    }
+
     els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
     els.dateInput.value = app.todayIso();
 

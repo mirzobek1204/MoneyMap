@@ -200,9 +200,9 @@ button:hover {
 }
 
 .lang-box.vivid {
-  background: linear-gradient(120deg, rgba(56, 189, 248, 0.2), rgba(253, 230, 138, 0.28));
-  border-color: #a8bff0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: linear-gradient(120deg, rgba(56, 189, 248, 0.32), rgba(253, 230, 138, 0.42));
+  border: 2px solid #8fb0eb;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .lang-box label {
@@ -514,10 +514,6 @@ td {
   transform: translateY(0);
 }
 
-.mobile-nav {
-  display: none;
-}
-
 .mobile-link,
 .mobile-link-btn {
   text-decoration: none;
@@ -547,6 +543,23 @@ td {
   border: none;
   color: #fff;
   background: linear-gradient(90deg, var(--danger-a), var(--danger-b));
+}
+
+.mobile-switch {
+  display: none;
+}
+
+.mobile-switch-toggle {
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 10px 14px;
+  background: linear-gradient(90deg, #0b74b5, #1d4ed8);
+}
+
+.mobile-switch-menu {
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
 }
 
 @media (max-width: 1140px) {
@@ -590,18 +603,16 @@ td {
   }
 
   .page-app .shell {
-    padding-bottom: 114px;
+    padding-bottom: 92px;
   }
 
-  .mobile-nav {
+  .mobile-switch {
     position: fixed;
-    left: 10px;
     right: 10px;
     bottom: 10px;
     z-index: 30;
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 8px;
+    display: block;
+    width: min(220px, calc(100vw - 20px));
     padding: 8px;
     border-radius: 16px;
     border: 1px solid #c5d7f5;
@@ -612,7 +623,7 @@ td {
 }
 
 @media (max-width: 640px) {
-  .auth-wrap {
+  .page-auth .auth-wrap {
     padding: 14px;
   }
 
@@ -628,17 +639,29 @@ td {
     align-items: flex-start;
   }
 
+  .auth-panel {
+    padding: 18px;
+  }
+
   .auth-panel h1 {
-    font-size: clamp(32px, 11vw, 48px);
+    font-size: clamp(29px, 9.2vw, 40px);
   }
 
   .auth-subtitle {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .lang-box {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .topbar h1 {
+    font-size: clamp(30px, 8.5vw, 40px);
+  }
+
+  .stat-card p {
+    font-size: clamp(25px, 8.2vw, 34px);
   }
 
   table {
