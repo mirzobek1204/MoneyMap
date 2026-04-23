@@ -1,157 +1,59 @@
-﻿<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PulPulse Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyMap - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="page-app">
-  <div class="bg-layer"></div>
-  <div class="bg-flare flare-app-a"></div>
-  <div class="bg-flare flare-app-b"></div>
+<body>
+    <header>
+        <h2 id="welcomeText"></h2>
+        <button id="logoutBtn">Chiqish</button>
+    </header>
 
-  <div class="shell">
-    <aside class="sidebar premium-panel">
-      <p class="logo-pill large">PulPulse</p>
-      <nav class="menu">
-        <a class="menu-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
-        <a class="menu-link" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
-      </nav>
-      <button id="logoutBtn" class="danger wide" type="button" data-i18n="nav.logout">Chiqish</button>
-    </aside>
-
-    <main class="content">
-      <header class="topbar premium-panel">
-        <div>
-          <h1 data-i18n="dashboard.title">Umumiy Ko'rinish</h1>
-          <p id="welcomeText" class="muted strong"></p>
+    <main>
+        <div class="stats-grid">
+            <div>Bugun: <span id="todayTotal">0</span></div>
+            <div>Shu oy: <span id="monthTotal">0</span></div>
+            <div>Jami: <span id="allTotal">0</span></div>
         </div>
-        <div class="lang-box vivid">
-          <label for="languageSelect" data-i18n="language.label">Language</label>
-          <select id="languageSelect">
-            <option value="uz">Uzbek</option>
-            <option value="en">English</option>
-            <option value="ru">Русский</option>
-          </select>
+
+        <form id="expenseForm">
+            <input type="date" id="dateInput">
+            <input type="number" id="amountInput" placeholder="Summa">
+            <select id="categoryInput">
+                <option value="food">Ovqat</option>
+                <option value="transport">Transport</option>
+                <option value="other">Boshqa</option>
+            </select>
+            <input type="text" id="noteInput" placeholder="Izoh">
+            <button type="submit">Saqlash</button>
+        </form>
+
+        <div class="budget-section">
+            <input type="number" id="budgetInput" placeholder="Oylik limit">
+            <button id="saveBudgetBtn">Limitni o'rnatish</button>
+            <div id="budgetBar" style="height: 10px; background: #eee; width: 100%;"></div>
+            <p id="budgetUsedText"></p>
+            <p id="budgetLeftText"></p>
         </div>
-      </header>
 
-      <section class="stats-row">
-        <article class="stat-card premium-panel stat-cyan">
-          <h3 data-i18n="stats.today">Bugun</h3>
-          <p id="todayTotal">0</p>
-        </article>
-        <article class="stat-card premium-panel stat-indigo">
-          <h3 data-i18n="stats.month">Joriy Oy</h3>
-          <p id="monthTotal">0</p>
-        </article>
-        <article class="stat-card premium-panel stat-amber">
-          <h3 data-i18n="stats.total">Umumiy</h3>
-          <p id="allTotal">0</p>
-        </article>
-      </section>
-
-      <section class="grid-two">
-        <article class="panel premium-panel neon-outline">
-          <div class="panel-head">
-            <h2 data-i18n="expense.title">Yangi Xarajat</h2>
-            <p id="challengeText" class="chip"></p>
-          </div>
-
-          <form id="expenseForm" class="form-grid">
-            <label>
-              <span data-i18n="expense.date">Sana</span>
-              <input id="dateInput" type="date" required />
-            </label>
-            <label>
-              <span data-i18n="expense.amount">Miqdor</span>
-              <input id="amountInput" type="number" min="0" step="100" data-i18n-placeholder="expense.amountPlaceholder" placeholder="50000" required />
-            </label>
-            <label>
-              <span data-i18n="expense.category">Kategoriya</span>
-              <select id="categoryInput" required>
-                <option value="" data-i18n="common.select">Tanlang</option>
-                <option value="food" data-i18n="category.food">Ovqat</option>
-                <option value="transport" data-i18n="category.transport">Transport</option>
-                <option value="utilities" data-i18n="category.utilities">Kommunal</option>
-                <option value="health" data-i18n="category.health">Sog'liq</option>
-                <option value="fun" data-i18n="category.fun">Ko'ngilochar</option>
-                <option value="other" data-i18n="category.other">Boshqa</option>
-              </select>
-            </label>
-            <label class="full">
-              <span data-i18n="expense.note">Izoh</span>
-              <input id="noteInput" type="text" data-i18n-placeholder="expense.notePlaceholder" placeholder="Qisqa izoh" />
-            </label>
-            <div class="quick-amounts full">
-              <span data-i18n="expense.quick">Tez summa</span>
-              <button type="button" class="ghost mini" data-quick="10000">10k</button>
-              <button type="button" class="ghost mini" data-quick="30000">30k</button>
-              <button type="button" class="ghost mini" data-quick="50000">50k</button>
-              <button type="button" class="ghost mini" data-quick="100000">100k</button>
-            </div>
-            <button class="full glow-btn" type="submit" data-i18n="common.save">Saqlash</button>
-          </form>
-        </article>
-
-        <article class="panel premium-panel warm-outline">
-          <h2 data-i18n="dashboard.progress">Progress</h2>
-          <label>
-            <span data-i18n="budget.monthly">Oylik budget</span>
-            <div class="budget-row">
-              <input id="budgetInput" type="number" min="0" step="1000" data-i18n-placeholder="budget.placeholder" placeholder="3000000" />
-              <button id="saveBudgetBtn" type="button" class="glow-btn" data-i18n="common.save">Saqlash</button>
-            </div>
-          </label>
-          <div class="progress-track">
-            <div id="budgetBar" class="progress-fill"></div>
-          </div>
-          <p id="budgetUsedText" class="muted"></p>
-          <p id="budgetLeftText" class="muted"></p>
-          <p id="streakText" class="muted strong"></p>
-          <p id="insightText" class="insight-text"></p>
-        </article>
-      </section>
-
-      <section class="panel premium-panel">
-        <div class="panel-head">
-          <h2 data-i18n="dashboard.recent">So'nggi Xarajatlar</h2>
-          <a class="link-btn" href="expenses.html" data-i18n="dashboard.allExpenses">Hammasini ko'rish</a>
-        </div>
-        <div class="table-wrap">
-          <table>
+        <table>
             <thead>
-              <tr>
-                <th data-i18n="table.date">Sana</th>
-                <th data-i18n="table.category">Kategoriya</th>
-                <th data-i18n="table.amount">Miqdor</th>
-                <th data-i18n="table.note">Izoh</th>
-              </tr>
+                <tr>
+                    <th>Sana</th>
+                    <th>Kategoriya</th>
+                    <th>Summa</th>
+                    <th>Amal</th>
+                </tr>
             </thead>
             <tbody id="recentBody"></tbody>
-          </table>
-        </div>
-        <p id="recentEmpty" class="muted"></p>
-      </section>
+        </table>
+        <p id="recentEmpty"></p>
     </main>
-  </div>
 
-  <div class="mobile-switch">
-    <button id="mobileSwitchToggle" class="mobile-switch-toggle" type="button">Bo'limlar</button>
-    <div id="mobileSwitchMenu" class="mobile-switch-menu hidden">
-      <a class="mobile-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
-      <a class="mobile-link" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
-      <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">Chiqish</button>
-    </div>
-  </div>
-
-  <div id="toast" class="toast"></div>
-
-  <script src="js/core.js"></script>
-  <script src="js/dashboard.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
