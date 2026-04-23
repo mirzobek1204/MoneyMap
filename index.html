@@ -1,0 +1,193 @@
+﻿<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulPulse - Kundalik Xarajatlar</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-shape bg-shape-1"></div>
+  <div class="bg-shape bg-shape-2"></div>
+
+  <main class="container">
+    <header class="hero">
+      <p class="badge">PulPulse</p>
+      <h1>Kundalik Xarajatlarni Qiziqarli Tarzda Boshqaring</h1>
+      <p>Userlar nafaqat xarajat yozadi, balki streak, level va challenge orqali qayta kirishga motivatsiya oladi.</p>
+    </header>
+
+    <section class="card auth-card">
+      <h2>Foydalanuvchi</h2>
+      <form id="loginForm" class="grid-form">
+        <label>
+          Ism (username)
+          <input id="usernameInput" type="text" placeholder="masalan: ali" required />
+        </label>
+        <button type="submit">Kirish / Almashtirish</button>
+      </form>
+      <p id="currentUserText" class="muted">Hali foydalanuvchi tanlanmagan.</p>
+    </section>
+
+    <section class="card highlight-card">
+      <div class="between">
+        <h2>Motivatsiya Markazi</h2>
+        <p id="challengeText" class="challenge-text">Bugungi challenge shu yerda chiqadi.</p>
+      </div>
+
+      <div class="retention-grid">
+        <article class="mini-card">
+          <h3>Oylik Budget Maqsadi</h3>
+          <div class="budget-row">
+            <input id="monthlyBudgetInput" type="number" min="0" step="1000" placeholder="Masalan: 3000000" />
+            <button id="saveBudgetBtn" type="button">Saqlash</button>
+          </div>
+          <div class="progress-track">
+            <div id="budgetProgressBar" class="progress-bar"></div>
+          </div>
+          <p id="budgetUsed" class="muted">Sarflangan: 0 so'm</p>
+          <p id="budgetLeft" class="muted">Qolgan: 0 so'm</p>
+        </article>
+
+        <article class="mini-card">
+          <h3>Level va Streak</h3>
+          <p><strong id="levelValue">1</strong> daraja</p>
+          <p><strong id="xpValue">0</strong> XP</p>
+          <p>Expense streak: <strong id="expenseStreakValue">0</strong> kun</p>
+          <p>Visit streak: <strong id="visitStreakValue">0</strong> kun</p>
+        </article>
+
+        <article class="mini-card">
+          <h3>Shaxsiy Insight</h3>
+          <p id="insightText" class="muted">Hali ma'lumot yo'q.</p>
+          <div id="badgesList" class="badges-list"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Xarajat Qo'shish</h2>
+      <form id="expenseForm" class="grid-form">
+        <label>
+          Sana
+          <input id="dateInput" type="date" required />
+        </label>
+        <label>
+          Miqdor (so'm)
+          <input id="amountInput" type="number" min="0" step="100" placeholder="50000" required />
+        </label>
+        <label>
+          Kategoriya
+          <select id="categoryInput" required>
+            <option value="">Tanlang</option>
+            <option>Ovqat</option>
+            <option>Transport</option>
+            <option>Kommunal</option>
+            <option>Sogliq</option>
+            <option>Kongilochar</option>
+            <option>Boshqa</option>
+          </select>
+        </label>
+        <label class="full-width">
+          Izoh
+          <input id="noteInput" type="text" placeholder="Qisqa izoh..." />
+        </label>
+        <div class="quick-add full-width">
+          <span>Tez summa:</span>
+          <button type="button" class="ghost small" data-quick-amount="10000">10k</button>
+          <button type="button" class="ghost small" data-quick-amount="25000">25k</button>
+          <button type="button" class="ghost small" data-quick-amount="50000">50k</button>
+          <button type="button" class="ghost small" data-quick-amount="100000">100k</button>
+        </div>
+        <button type="submit" class="full-width">Saqlash</button>
+      </form>
+    </section>
+
+    <section class="stats-grid">
+      <article class="card stat">
+        <h3>Bugun</h3>
+        <p id="todayTotal">0 so'm</p>
+      </article>
+      <article class="card stat">
+        <h3>Joriy Oy</h3>
+        <p id="monthTotal">0 so'm</p>
+      </article>
+      <article class="card stat">
+        <h3>Umumiy</h3>
+        <p id="allTotal">0 so'm</p>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Filter</h2>
+      <form id="filterForm" class="grid-form">
+        <label>
+          Boshlanish sanasi
+          <input id="fromDate" type="date" />
+        </label>
+        <label>
+          Tugash sanasi
+          <input id="toDate" type="date" />
+        </label>
+        <label>
+          Kategoriya
+          <select id="filterCategory">
+            <option value="">Barchasi</option>
+            <option>Ovqat</option>
+            <option>Transport</option>
+            <option>Kommunal</option>
+            <option>Sogliq</option>
+            <option>Kongilochar</option>
+            <option>Boshqa</option>
+          </select>
+        </label>
+        <button type="submit">Filter Qo'llash</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="between">
+        <h2>Royxat</h2>
+        <div class="actions">
+          <button id="exportBtn" type="button">JSON Yuklab Olish</button>
+          <label class="upload-btn">
+            JSON Yuklash
+            <input id="importInput" type="file" accept="application/json" />
+          </label>
+          <button id="clearUserBtn" type="button" class="danger">Joriy User Malumotini Tozalash</button>
+        </div>
+      </div>
+      <p id="filteredTotal" class="muted">Filter natijasi: 0 so'm</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sana</th>
+              <th>Kategoriya</th>
+              <th>Miqdor</th>
+              <th>Izoh</th>
+              <th>Amal</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTableBody"></tbody>
+        </table>
+      </div>
+      <p id="emptyState" class="muted">Xarajatlar hozircha yo'q.</p>
+    </section>
+  </main>
+
+  <template id="rowTemplate">
+    <tr>
+      <td data-col="date"></td>
+      <td data-col="category"></td>
+      <td data-col="amount"></td>
+      <td data-col="note"></td>
+      <td><button class="danger small" type="button" data-action="delete">Ochirish</button></td>
+    </tr>
+  </template>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
