@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const app = window.PulPulse;
   
   // 1. Avtorizatsiyani tekshirish
@@ -215,3 +215,4 @@
     });
   }
 })();
+

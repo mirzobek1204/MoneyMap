@@ -1,59 +1,154 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoneyMap - Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <header>
-        <h2 id="welcomeText"></h2>
-        <button id="logoutBtn">Chiqish</button>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PulPulse - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page-app">
+    <div class="bg-layer"></div>
+    <div class="bg-flare flare-app-a"></div>
+    <div class="bg-flare flare-app-c"></div>
 
-    <main>
-        <div class="stats-grid">
-            <div>Bugun: <span id="todayTotal">0</span></div>
-            <div>Shu oy: <span id="monthTotal">0</span></div>
-            <div>Jami: <span id="allTotal">0</span></div>
-        </div>
+    <div class="shell">
+      <aside class="sidebar premium-panel">
+        <p class="logo-pill large" data-i18n="app.name">PulPulse</p>
+        <nav class="menu">
+          <a class="menu-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+          <a class="menu-link" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
+        </nav>
+        <button id="logoutBtn" class="danger wide" type="button" data-i18n="nav.logout">
+          Chiqish
+        </button>
+      </aside>
 
-        <form id="expenseForm">
-            <input type="date" id="dateInput">
-            <input type="number" id="amountInput" placeholder="Summa">
-            <select id="categoryInput">
-                <option value="food">Ovqat</option>
-                <option value="transport">Transport</option>
-                <option value="other">Boshqa</option>
+      <main class="content">
+        <header class="topbar premium-panel">
+          <div>
+            <h1 data-i18n="dashboard.title">Dashboard</h1>
+            <p id="welcomeText" class="muted strong"></p>
+          </div>
+          <div class="lang-box vivid">
+            <label for="languageSelect" data-i18n="language.label">Til</label>
+            <select id="languageSelect">
+              <option value="uz">O'zbek</option>
+              <option value="en">English</option>
+              <option value="ru">Русский</option>
             </select>
-            <input type="text" id="noteInput" placeholder="Izoh">
-            <button type="submit">Saqlash</button>
-        </form>
+          </div>
+        </header>
 
-        <div class="budget-section">
-            <input type="number" id="budgetInput" placeholder="Oylik limit">
-            <button id="saveBudgetBtn">Limitni o'rnatish</button>
-            <div id="budgetBar" style="height: 10px; background: #eee; width: 100%;"></div>
-            <p id="budgetUsedText"></p>
-            <p id="budgetLeftText"></p>
-        </div>
+        <section class="panel premium-panel neon-outline">
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat-label" data-i18n="stats.today">Bugun</span>
+              <span id="todayTotal" class="stat-value">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label" data-i18n="stats.month">Shu oy</span>
+              <span id="monthTotal" class="stat-value">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label" data-i18n="stats.all">Jami</span>
+              <span id="allTotal" class="stat-value">0</span>
+            </div>
+          </div>
+        </section>
 
-        <table>
-            <thead>
+        <section class="panel premium-panel">
+          <h2 data-i18n="expense.save">Saqlash</h2>
+          <form id="expenseForm" class="form-grid">
+            <label>
+              <span data-i18n="expense.date">Sana</span>
+              <input type="date" id="dateInput" />
+            </label>
+            <label>
+              <span data-i18n="expense.amount">Summa</span>
+              <input type="number" id="amountInput" placeholder="0" />
+            </label>
+            <label>
+              <span data-i18n="expense.category">Kategoriya</span>
+              <select id="categoryInput">
+                <option value="food" data-i18n="category.food">Ovqat</option>
+                <option value="transport" data-i18n="category.transport">Transport</option>
+                <option value="utilities" data-i18n="category.utilities">Kommunal</option>
+                <option value="health" data-i18n="category.health">Sog'liq</option>
+                <option value="fun" data-i18n="category.fun">Ko'ngilochar</option>
+                <option value="other" data-i18n="category.other">Boshqa</option>
+              </select>
+            </label>
+            <label class="span-2">
+              <span data-i18n="expense.note">Izoh</span>
+              <input type="text" id="noteInput" placeholder="..." />
+            </label>
+            <button class="glow-btn" type="submit" data-i18n="expense.save">Saqlash</button>
+          </form>
+        </section>
+
+        <section class="panel premium-panel">
+          <h2 data-i18n="budget.title">Oylik limit</h2>
+          <div class="budget-grid">
+            <input type="number" id="budgetInput" placeholder="Oylik limit" data-i18n-placeholder="budget.placeholder" />
+            <button id="saveBudgetBtn" class="glow-btn" type="button" data-i18n="budget.set">
+              Limitni o'rnatish
+            </button>
+          </div>
+          <div class="budget-bar">
+            <div id="budgetBar" class="budget-bar-fill"></div>
+          </div>
+          <p id="budgetUsedText" class="muted strong"></p>
+          <p id="budgetLeftText" class="muted strong"></p>
+        </section>
+
+        <section class="panel premium-panel neon-outline">
+          <h2 data-i18n="dashboard.insightTitle">Insight</h2>
+          <p id="challengeText" class="muted strong"></p>
+          <p id="streakText" class="muted strong"></p>
+          <p id="insightText" class="muted strong"></p>
+        </section>
+
+        <section class="panel premium-panel">
+          <h2 data-i18n="dashboard.recentTitle">Oxirgi xarajatlar</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                    <th>Sana</th>
-                    <th>Kategoriya</th>
-                    <th>Summa</th>
-                    <th>Amal</th>
+                  <th data-i18n="table.date">Sana</th>
+                  <th data-i18n="table.category">Kategoriya</th>
+                  <th data-i18n="table.amount">Miqdor</th>
+                  <th data-i18n="table.note">Izoh</th>
+                  <th data-i18n="table.action">Amal</th>
                 </tr>
-            </thead>
-            <tbody id="recentBody"></tbody>
-        </table>
-        <p id="recentEmpty"></p>
-    </main>
+              </thead>
+              <tbody id="recentBody"></tbody>
+            </table>
+          </div>
+          <p id="recentEmpty" class="muted"></p>
+        </section>
+      </main>
+    </div>
+
+    <div class="mobile-switch">
+      <button id="mobileSwitchToggle" class="mobile-switch-toggle" type="button">Bo'limlar</button>
+      <div id="mobileSwitchMenu" class="mobile-switch-menu hidden">
+        <a class="mobile-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+        <a class="mobile-link" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
+        <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">
+          Chiqish
+        </button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
 
     <script src="js/core.js"></script>
     <script src="js/dashboard.js"></script>
-</body>
+  </body>
 </html>

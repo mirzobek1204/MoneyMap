@@ -4,6 +4,7 @@
   // Elementlar borligini tekshiramiz
   const loginForm = document.getElementById("loginForm");
   const usernameInput = document.getElementById("usernameInput");
+  const languageSelect = document.getElementById("languageSelect");
   const continueBtn = document.getElementById("continueBtn");
   const continueText = document.getElementById("continueText");
 
@@ -13,6 +14,7 @@
       return;
   }
 
+  if (languageSelect) app.bindLanguageSelect(languageSelect);
   app.applyI18n();
   renderContinue();
 
