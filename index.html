@@ -11,12 +11,14 @@
 </head>
 <body class="page-auth">
   <div class="bg-layer"></div>
+  <div class="bg-flare flare-auth-a"></div>
+  <div class="bg-flare flare-auth-b"></div>
 
   <main class="auth-wrap">
-    <section class="auth-panel">
+    <section class="auth-panel premium-panel">
       <div class="panel-top">
         <p class="logo-pill">PulPulse</p>
-        <div class="lang-box">
+        <div class="lang-box vivid">
           <label for="languageSelect" data-i18n="language.label">Language</label>
           <select id="languageSelect">
             <option value="uz">Uzbek</option>
@@ -27,15 +29,17 @@
       </div>
 
       <h1 data-i18n="login.title">Xarajatlarni boshqarish endi oson</h1>
-      <p class="auth-subtitle" data-i18n="login.subtitle">Ismingizni kiriting va darhol ishlashni boshlang.</p>
+      <p class="auth-subtitle" data-i18n="login.subtitle">Ismingizni kiriting va darhol ishlatishni boshlang.</p>
 
       <form id="loginForm" class="auth-form">
         <label for="usernameInput" data-i18n="login.inputLabel">Ism</label>
-        <input id="usernameInput" type="text" autocomplete="off" data-i18n-placeholder="login.placeholder" placeholder="masalan: Mirzobek" required />
-        <button type="submit" data-i18n="login.submit">Kirish</button>
+        <div class="input-shell">
+          <input id="usernameInput" type="text" autocomplete="off" data-i18n-placeholder="login.placeholder" placeholder="Mirzobek" required />
+        </div>
+        <button type="submit" class="glow-btn" data-i18n="login.submit">Kirish</button>
       </form>
 
-      <p id="continueText" class="muted"></p>
+      <p id="continueText" class="muted strong"></p>
       <button id="continueBtn" class="ghost wide hidden" type="button"></button>
     </section>
   </main>

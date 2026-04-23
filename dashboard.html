@@ -11,9 +11,11 @@
 </head>
 <body class="page-app">
   <div class="bg-layer"></div>
+  <div class="bg-flare flare-app-a"></div>
+  <div class="bg-flare flare-app-b"></div>
 
   <div class="shell">
-    <aside class="sidebar">
+    <aside class="sidebar premium-panel">
       <p class="logo-pill large">PulPulse</p>
       <nav class="menu">
         <a class="menu-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
@@ -23,40 +25,38 @@
     </aside>
 
     <main class="content">
-      <header class="topbar">
+      <header class="topbar premium-panel">
         <div>
           <h1 data-i18n="dashboard.title">Umumiy Ko'rinish</h1>
-          <p id="welcomeText" class="muted"></p>
+          <p id="welcomeText" class="muted strong"></p>
         </div>
-        <div class="top-actions">
-          <div class="lang-box">
-            <label for="languageSelect" data-i18n="language.label">Language</label>
-            <select id="languageSelect">
-              <option value="uz">Uzbek</option>
-              <option value="en">English</option>
-              <option value="ru">Русский</option>
-            </select>
-          </div>
+        <div class="lang-box vivid">
+          <label for="languageSelect" data-i18n="language.label">Language</label>
+          <select id="languageSelect">
+            <option value="uz">Uzbek</option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+          </select>
         </div>
       </header>
 
       <section class="stats-row">
-        <article class="stat-card">
+        <article class="stat-card premium-panel stat-cyan">
           <h3 data-i18n="stats.today">Bugun</h3>
           <p id="todayTotal">0</p>
         </article>
-        <article class="stat-card">
+        <article class="stat-card premium-panel stat-indigo">
           <h3 data-i18n="stats.month">Joriy Oy</h3>
           <p id="monthTotal">0</p>
         </article>
-        <article class="stat-card">
+        <article class="stat-card premium-panel stat-amber">
           <h3 data-i18n="stats.total">Umumiy</h3>
           <p id="allTotal">0</p>
         </article>
       </section>
 
       <section class="grid-two">
-        <article class="panel">
+        <article class="panel premium-panel neon-outline">
           <div class="panel-head">
             <h2 data-i18n="expense.title">Yangi Xarajat</h2>
             <p id="challengeText" class="chip"></p>
@@ -94,17 +94,17 @@
               <button type="button" class="ghost mini" data-quick="50000">50k</button>
               <button type="button" class="ghost mini" data-quick="100000">100k</button>
             </div>
-            <button class="full" type="submit" data-i18n="common.save">Saqlash</button>
+            <button class="full glow-btn" type="submit" data-i18n="common.save">Saqlash</button>
           </form>
         </article>
 
-        <article class="panel">
+        <article class="panel premium-panel warm-outline">
           <h2 data-i18n="dashboard.progress">Progress</h2>
           <label>
             <span data-i18n="budget.monthly">Oylik budget</span>
             <div class="budget-row">
               <input id="budgetInput" type="number" min="0" step="1000" data-i18n-placeholder="budget.placeholder" placeholder="3000000" />
-              <button id="saveBudgetBtn" type="button" data-i18n="common.save">Saqlash</button>
+              <button id="saveBudgetBtn" type="button" class="glow-btn" data-i18n="common.save">Saqlash</button>
             </div>
           </label>
           <div class="progress-track">
@@ -112,12 +112,12 @@
           </div>
           <p id="budgetUsedText" class="muted"></p>
           <p id="budgetLeftText" class="muted"></p>
-          <p id="streakText" class="muted"></p>
-          <p id="insightText"></p>
+          <p id="streakText" class="muted strong"></p>
+          <p id="insightText" class="insight-text"></p>
         </article>
       </section>
 
-      <section class="panel">
+      <section class="panel premium-panel">
         <div class="panel-head">
           <h2 data-i18n="dashboard.recent">So'nggi Xarajatlar</h2>
           <a class="link-btn" href="expenses.html" data-i18n="dashboard.allExpenses">Hammasini ko'rish</a>
@@ -139,6 +139,12 @@
       </section>
     </main>
   </div>
+
+  <nav class="mobile-nav">
+    <a class="mobile-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+    <a class="mobile-link" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
+    <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">Chiqish</button>
+  </nav>
 
   <div id="toast" class="toast"></div>
 

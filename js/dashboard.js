@@ -25,6 +25,7 @@
     insightText: document.getElementById("insightText"),
     recentBody: document.getElementById("recentBody"),
     recentEmpty: document.getElementById("recentEmpty"),
+    mobileLogoutBtn: document.getElementById("mobileLogoutBtn"),
   };
 
   app.bindLanguageSelect(els.languageSelect);
@@ -36,6 +37,9 @@
 
   function bindEvents() {
     els.logoutBtn.addEventListener("click", app.logout);
+    if (els.mobileLogoutBtn) {
+      els.mobileLogoutBtn.addEventListener("click", app.logout);
+    }
 
     els.expenseForm.addEventListener("submit", (event) => {
       event.preventDefault();

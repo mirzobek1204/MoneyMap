@@ -11,9 +11,11 @@
 </head>
 <body class="page-app">
   <div class="bg-layer"></div>
+  <div class="bg-flare flare-app-a"></div>
+  <div class="bg-flare flare-app-c"></div>
 
   <div class="shell">
-    <aside class="sidebar">
+    <aside class="sidebar premium-panel">
       <p class="logo-pill large">PulPulse</p>
       <nav class="menu">
         <a class="menu-link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
@@ -23,12 +25,12 @@
     </aside>
 
     <main class="content">
-      <header class="topbar">
+      <header class="topbar premium-panel">
         <div>
           <h1 data-i18n="expenses.title">Xarajatlar Ro'yxati</h1>
-          <p id="welcomeText" class="muted"></p>
+          <p id="welcomeText" class="muted strong"></p>
         </div>
-        <div class="lang-box">
+        <div class="lang-box vivid">
           <label for="languageSelect" data-i18n="language.label">Language</label>
           <select id="languageSelect">
             <option value="uz">Uzbek</option>
@@ -38,7 +40,7 @@
         </div>
       </header>
 
-      <section class="panel">
+      <section class="panel premium-panel neon-outline">
         <h2 data-i18n="filter.title">Filter</h2>
         <form id="filterForm" class="form-grid">
           <label>
@@ -61,12 +63,12 @@
               <option value="other" data-i18n="category.other">Boshqa</option>
             </select>
           </label>
-          <button type="submit" data-i18n="filter.apply">Qo'llash</button>
+          <button class="glow-btn" type="submit" data-i18n="filter.apply">Qo'llash</button>
         </form>
-        <p id="filteredText" class="muted"></p>
+        <p id="filteredText" class="muted strong"></p>
       </section>
 
-      <section class="panel">
+      <section class="panel premium-panel">
         <div class="table-wrap">
           <table>
             <thead>
@@ -84,13 +86,19 @@
         <p id="emptyText" class="muted"></p>
       </section>
 
-      <section class="panel danger-zone">
-        <h2 data-i18n="danger.title">Danger Zone</h2>
+      <section class="panel premium-panel care-zone">
+        <h2 data-i18n="danger.title">Ma'lumotlarni Boshqarish</h2>
         <p class="muted" data-i18n="danger.text">Faqat joriy user ma'lumotlari tozalanadi.</p>
-        <button id="clearBtn" class="danger" type="button" data-i18n="danger.clear">Barcha ma'lumotlarni tozalash</button>
+        <button id="clearBtn" class="danger" type="button" data-i18n="danger.clear">Joriy profilni tozalash</button>
       </section>
     </main>
   </div>
+
+  <nav class="mobile-nav">
+    <a class="mobile-link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+    <a class="mobile-link active" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
+    <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">Chiqish</button>
+  </nav>
 
   <div id="toast" class="toast"></div>
 

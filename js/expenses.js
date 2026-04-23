@@ -15,6 +15,7 @@
     tableBody: document.getElementById("tableBody"),
     emptyText: document.getElementById("emptyText"),
     clearBtn: document.getElementById("clearBtn"),
+    mobileLogoutBtn: document.getElementById("mobileLogoutBtn"),
   };
 
   const filters = { fromDate: "", toDate: "", category: "" };
@@ -28,6 +29,9 @@
 
   function bindEvents() {
     els.logoutBtn.addEventListener("click", app.logout);
+    if (els.mobileLogoutBtn) {
+      els.mobileLogoutBtn.addEventListener("click", app.logout);
+    }
 
     els.filterForm.addEventListener("submit", (event) => {
       event.preventDefault();
