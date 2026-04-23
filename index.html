@@ -3,44 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PulPulse - Kundalik Xarajatlar</title>
+  <title>PulPulse - Daily Expense Tracker</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-shape bg-shape-1"></div>
-  <div class="bg-shape bg-shape-2"></div>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="bg-grid"></div>
 
   <main class="container">
     <header class="hero">
-      <p class="badge">PulPulse</p>
-      <h1>Kundalik Xarajatlarni Qiziqarli Tarzda Boshqaring</h1>
-      <p>Userlar nafaqat xarajat yozadi, balki streak, level va challenge orqali qayta kirishga motivatsiya oladi.</p>
+      <div class="hero-top">
+        <p class="brand-pill">PulPulse</p>
+        <div class="lang-box">
+          <label for="languageSelect" data-i18n="language.label">Language</label>
+          <select id="languageSelect" aria-label="Language selector">
+            <option value="uz" data-i18n="language.uz">Uzbek</option>
+            <option value="en" data-i18n="language.en">English</option>
+            <option value="ru" data-i18n="language.ru">Русский</option>
+          </select>
+        </div>
+      </div>
+      <h1 data-i18n="hero.title">Kundalik Xarajatlarni Aqlli Tarzda Boshqaring</h1>
+      <p data-i18n="hero.subtitle">Xarajatlarni kiriting, progressni kuzating, challenge va streak orqali doimiy motivatsiyada qoling.</p>
     </header>
 
-    <section class="card auth-card">
-      <h2>Foydalanuvchi</h2>
+    <section class="card">
+      <h2 data-i18n="auth.title">Foydalanuvchi</h2>
       <form id="loginForm" class="grid-form">
         <label>
-          Ism (username)
-          <input id="usernameInput" type="text" placeholder="masalan: ali" required />
+          <span data-i18n="auth.username">Ism (username)</span>
+          <input id="usernameInput" type="text" data-i18n-placeholder="auth.usernamePlaceholder" placeholder="masalan: ali" required />
         </label>
-        <button type="submit">Kirish / Almashtirish</button>
+        <button type="submit" data-i18n="auth.submit">Kirish / Almashtirish</button>
       </form>
       <p id="currentUserText" class="muted">Hali foydalanuvchi tanlanmagan.</p>
     </section>
 
-    <section class="card highlight-card">
+    <section class="card feature-card">
       <div class="between">
-        <h2>Motivatsiya Markazi</h2>
+        <h2 data-i18n="motivation.title">Motivatsiya Markazi</h2>
         <p id="challengeText" class="challenge-text">Bugungi challenge shu yerda chiqadi.</p>
       </div>
 
-      <div class="retention-grid">
+      <div class="feature-grid">
         <article class="mini-card">
-          <h3>Oylik Budget Maqsadi</h3>
+          <h3 data-i18n="motivation.budgetTitle">Oylik Budget Maqsadi</h3>
           <div class="budget-row">
-            <input id="monthlyBudgetInput" type="number" min="0" step="1000" placeholder="Masalan: 3000000" />
-            <button id="saveBudgetBtn" type="button">Saqlash</button>
+            <input id="monthlyBudgetInput" type="number" min="0" step="1000" data-i18n-placeholder="motivation.budgetPlaceholder" placeholder="Masalan: 3000000" />
+            <button id="saveBudgetBtn" type="button" data-i18n="common.save">Saqlash</button>
           </div>
           <div class="progress-track">
             <div id="budgetProgressBar" class="progress-bar"></div>
@@ -50,15 +61,15 @@
         </article>
 
         <article class="mini-card">
-          <h3>Level va Streak</h3>
-          <p><strong id="levelValue">1</strong> daraja</p>
+          <h3 data-i18n="motivation.levelTitle">Level va Streak</h3>
+          <p><strong id="levelValue">1</strong> <span data-i18n="motivation.levelSuffix">daraja</span></p>
           <p><strong id="xpValue">0</strong> XP</p>
-          <p>Expense streak: <strong id="expenseStreakValue">0</strong> kun</p>
-          <p>Visit streak: <strong id="visitStreakValue">0</strong> kun</p>
+          <p><span data-i18n="motivation.expenseStreak">Expense streak</span>: <strong id="expenseStreakValue">0</strong> <span data-i18n="common.days">kun</span></p>
+          <p><span data-i18n="motivation.visitStreak">Visit streak</span>: <strong id="visitStreakValue">0</strong> <span data-i18n="common.days">kun</span></p>
         </article>
 
         <article class="mini-card">
-          <h3>Shaxsiy Insight</h3>
+          <h3 data-i18n="motivation.insightTitle">Shaxsiy Insight</h3>
           <p id="insightText" class="muted">Hali ma'lumot yo'q.</p>
           <div id="badgesList" class="badges-list"></div>
         </article>
@@ -66,95 +77,95 @@
     </section>
 
     <section class="card">
-      <h2>Xarajat Qo'shish</h2>
+      <h2 data-i18n="expense.title">Xarajat Qo'shish</h2>
       <form id="expenseForm" class="grid-form">
         <label>
-          Sana
+          <span data-i18n="expense.date">Sana</span>
           <input id="dateInput" type="date" required />
         </label>
         <label>
-          Miqdor (so'm)
-          <input id="amountInput" type="number" min="0" step="100" placeholder="50000" required />
+          <span data-i18n="expense.amount">Miqdor (so'm)</span>
+          <input id="amountInput" type="number" min="0" step="100" data-i18n-placeholder="expense.amountPlaceholder" placeholder="50000" required />
         </label>
         <label>
-          Kategoriya
+          <span data-i18n="expense.category">Kategoriya</span>
           <select id="categoryInput" required>
-            <option value="">Tanlang</option>
-            <option>Ovqat</option>
-            <option>Transport</option>
-            <option>Kommunal</option>
-            <option>Sogliq</option>
-            <option>Kongilochar</option>
-            <option>Boshqa</option>
+            <option value="" data-i18n="common.select">Tanlang</option>
+            <option value="food" data-i18n="category.food">Ovqat</option>
+            <option value="transport" data-i18n="category.transport">Transport</option>
+            <option value="utilities" data-i18n="category.utilities">Kommunal</option>
+            <option value="health" data-i18n="category.health">Sog'liq</option>
+            <option value="fun" data-i18n="category.fun">Ko'ngilochar</option>
+            <option value="other" data-i18n="category.other">Boshqa</option>
           </select>
         </label>
         <label class="full-width">
-          Izoh
-          <input id="noteInput" type="text" placeholder="Qisqa izoh..." />
+          <span data-i18n="expense.note">Izoh</span>
+          <input id="noteInput" type="text" data-i18n-placeholder="expense.notePlaceholder" placeholder="Qisqa izoh..." />
         </label>
         <div class="quick-add full-width">
-          <span>Tez summa:</span>
+          <span data-i18n="expense.quickAmount">Tez summa:</span>
           <button type="button" class="ghost small" data-quick-amount="10000">10k</button>
           <button type="button" class="ghost small" data-quick-amount="25000">25k</button>
           <button type="button" class="ghost small" data-quick-amount="50000">50k</button>
           <button type="button" class="ghost small" data-quick-amount="100000">100k</button>
         </div>
-        <button type="submit" class="full-width">Saqlash</button>
+        <button type="submit" class="full-width" data-i18n="common.save">Saqlash</button>
       </form>
     </section>
 
     <section class="stats-grid">
       <article class="card stat">
-        <h3>Bugun</h3>
+        <h3 data-i18n="stats.today">Bugun</h3>
         <p id="todayTotal">0 so'm</p>
       </article>
       <article class="card stat">
-        <h3>Joriy Oy</h3>
+        <h3 data-i18n="stats.month">Joriy Oy</h3>
         <p id="monthTotal">0 so'm</p>
       </article>
       <article class="card stat">
-        <h3>Umumiy</h3>
+        <h3 data-i18n="stats.all">Umumiy</h3>
         <p id="allTotal">0 so'm</p>
       </article>
     </section>
 
     <section class="card">
-      <h2>Filter</h2>
+      <h2 data-i18n="filter.title">Filter</h2>
       <form id="filterForm" class="grid-form">
         <label>
-          Boshlanish sanasi
+          <span data-i18n="filter.from">Boshlanish sanasi</span>
           <input id="fromDate" type="date" />
         </label>
         <label>
-          Tugash sanasi
+          <span data-i18n="filter.to">Tugash sanasi</span>
           <input id="toDate" type="date" />
         </label>
         <label>
-          Kategoriya
+          <span data-i18n="expense.category">Kategoriya</span>
           <select id="filterCategory">
-            <option value="">Barchasi</option>
-            <option>Ovqat</option>
-            <option>Transport</option>
-            <option>Kommunal</option>
-            <option>Sogliq</option>
-            <option>Kongilochar</option>
-            <option>Boshqa</option>
+            <option value="" data-i18n="filter.all">Barchasi</option>
+            <option value="food" data-i18n="category.food">Ovqat</option>
+            <option value="transport" data-i18n="category.transport">Transport</option>
+            <option value="utilities" data-i18n="category.utilities">Kommunal</option>
+            <option value="health" data-i18n="category.health">Sog'liq</option>
+            <option value="fun" data-i18n="category.fun">Ko'ngilochar</option>
+            <option value="other" data-i18n="category.other">Boshqa</option>
           </select>
         </label>
-        <button type="submit">Filter Qo'llash</button>
+        <button type="submit" data-i18n="filter.apply">Filter Qo'llash</button>
       </form>
     </section>
 
     <section class="card">
       <div class="between">
-        <h2>Royxat</h2>
+        <h2 data-i18n="list.title">Ro'yxat</h2>
         <div class="actions">
-          <button id="exportBtn" type="button">JSON Yuklab Olish</button>
+          <button id="exportBtn" type="button" data-i18n="list.export">JSON Yuklab Olish</button>
           <label class="upload-btn">
-            JSON Yuklash
+            <span data-i18n="list.import">JSON Yuklash</span>
             <input id="importInput" type="file" accept="application/json" />
           </label>
-          <button id="clearUserBtn" type="button" class="danger">Joriy User Malumotini Tozalash</button>
+          <button id="clearUserBtn" type="button" class="danger" data-i18n="list.clearUser">Joriy user ma'lumotlarini tozalash</button>
         </div>
       </div>
       <p id="filteredTotal" class="muted">Filter natijasi: 0 so'm</p>
@@ -162,11 +173,11 @@
         <table>
           <thead>
             <tr>
-              <th>Sana</th>
-              <th>Kategoriya</th>
-              <th>Miqdor</th>
-              <th>Izoh</th>
-              <th>Amal</th>
+              <th data-i18n="table.date">Sana</th>
+              <th data-i18n="table.category">Kategoriya</th>
+              <th data-i18n="table.amount">Miqdor</th>
+              <th data-i18n="table.note">Izoh</th>
+              <th data-i18n="table.action">Amal</th>
             </tr>
           </thead>
           <tbody id="expenseTableBody"></tbody>
@@ -182,7 +193,7 @@
       <td data-col="category"></td>
       <td data-col="amount"></td>
       <td data-col="note"></td>
-      <td><button class="danger small" type="button" data-action="delete">Ochirish</button></td>
+      <td><button class="danger small" type="button" data-action="delete"></button></td>
     </tr>
   </template>
 
