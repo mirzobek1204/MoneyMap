@@ -13,6 +13,7 @@
   <div class="bg-layer"></div>
   <div class="bg-flare flare-app-a"></div>
   <div class="bg-flare flare-app-c"></div>
+  <div id="navBackdrop" class="nav-backdrop" aria-hidden="true"></div>
 
   <div class="shell">
     <aside class="sidebar premium-panel">
@@ -26,6 +27,13 @@
 
     <main class="content">
       <header class="topbar premium-panel">
+        <button id="topMenuBtn" class="top-menu-btn" type="button" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
         <div>
           <h1 data-i18n="expenses.title">Xarajatlar Ro'yxati</h1>
           <p id="welcomeText" class="muted strong"></p>
@@ -92,15 +100,6 @@
         <button id="clearBtn" class="danger" type="button" data-i18n="danger.clear">Joriy profilni tozalash</button>
       </section>
     </main>
-  </div>
-
-  <div class="mobile-switch">
-    <button id="mobileSwitchToggle" class="mobile-switch-toggle" type="button">Bo'limlar</button>
-    <div id="mobileSwitchMenu" class="mobile-switch-menu hidden">
-      <a class="mobile-link" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
-      <a class="mobile-link active" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
-      <button id="mobileLogoutBtn" class="mobile-link-btn" type="button" data-i18n="nav.logout">Chiqish</button>
-    </div>
   </div>
 
   <div id="toast" class="toast"></div>

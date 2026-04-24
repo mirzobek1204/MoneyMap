@@ -18,9 +18,8 @@
     tableBody: document.getElementById("tableBody"),
     emptyText: document.getElementById("emptyText"),
     clearBtn: document.getElementById("clearBtn"),
-    mobileLogoutBtn: document.getElementById("mobileLogoutBtn"),
-    mobileSwitchToggle: document.getElementById("mobileSwitchToggle"),
-    mobileSwitchMenu: document.getElementById("mobileSwitchMenu"),
+    topMenuBtn: document.getElementById("topMenuBtn"),
+    navBackdrop: document.getElementById("navBackdrop"),
   };
 
   const filters = { fromDate: "", toDate: "", category: "" };
@@ -37,22 +36,21 @@
   function bindEvents() {
     // Logoutlar
     els.logoutBtn?.addEventListener("click", () => app.logout());
-    els.mobileLogoutBtn?.addEventListener("click", () => app.logout());
 
-    // Mobil menyu
-    if (els.mobileSwitchToggle && els.mobileSwitchMenu) {
-      els.mobileSwitchToggle.addEventListener("click", (event) => {
-        event.stopPropagation();
-        els.mobileSwitchMenu.classList.toggle("hidden");
-      });
+    // Mobil menyu (drawer sidebar)
+    els.topMenuBtn?.addEventListener("click", () => setSidebarOpen(!isSidebarOpen()));
+    els.navBackdrop?.addEventListener("click", () => setSidebarOpen(false));
+    document.querySelectorAll(".menu-link").forEach((link) => {
+      link.addEventListener("click", () => setSidebarOpen(false));
+    });
 
-      document.addEventListener("click", (event) => {
-        if (!els.mobileSwitchMenu.classList.contains("hidden")) {
-          const inside = event.target.closest(".mobile-switch");
-          if (!inside) els.mobileSwitchMenu.classList.add("hidden");
-        }
-      });
-    }
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setSidebarOpen(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) setSidebarOpen(false);
+    });
 
     // Filtrni qo'llash
     els.filterForm?.addEventListener("submit", (event) => {
@@ -86,12 +84,6 @@
   }
 
   function render() {
-    // Mobil menyu matnini yangilash
-    if (els.mobileSwitchToggle) {
-      const map = { uz: "Bo'limlar", en: "Sections", ru: "Разделы" };
-      els.mobileSwitchToggle.textContent = map[app.state.language] || "Sections";
-    }
-
     if (els.welcomeText) {
       els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
     }
@@ -156,6 +148,14 @@
 
   function sumBy(list) {
     return list.reduce((acc, item) => acc + Number(item.amount || 0), 0);
+  }
+
+  function isSidebarOpen() {
+    return document.body.classList.contains("sidebar-open");
+  }
+
+  function setSidebarOpen(open) {
+    document.body.classList.toggle("sidebar-open", Boolean(open));
   }
 })();
 

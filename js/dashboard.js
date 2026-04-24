@@ -28,9 +28,8 @@
     insightText: document.getElementById("insightText"),
     recentBody: document.getElementById("recentBody"),
     recentEmpty: document.getElementById("recentEmpty"),
-    mobileLogoutBtn: document.getElementById("mobileLogoutBtn"),
-    mobileSwitchToggle: document.getElementById("mobileSwitchToggle"),
-    mobileSwitchMenu: document.getElementById("mobileSwitchMenu"),
+    topMenuBtn: document.getElementById("topMenuBtn"),
+    navBackdrop: document.getElementById("navBackdrop"),
   };
 
   // 3. Init
@@ -45,22 +44,21 @@
   function bindEvents() {
     // Logout funksiyalari
     els.logoutBtn?.addEventListener("click", () => app.logout());
-    els.mobileLogoutBtn?.addEventListener("click", () => app.logout());
 
-    // Mobil menyu logikasi
-    if (els.mobileSwitchToggle && els.mobileSwitchMenu) {
-      els.mobileSwitchToggle.addEventListener("click", (event) => {
-        event.stopPropagation();
-        els.mobileSwitchMenu.classList.toggle("hidden");
-      });
+    // Mobil menyu (drawer sidebar)
+    els.topMenuBtn?.addEventListener("click", () => setSidebarOpen(!isSidebarOpen()));
+    els.navBackdrop?.addEventListener("click", () => setSidebarOpen(false));
+    document.querySelectorAll(".menu-link").forEach((link) => {
+      link.addEventListener("click", () => setSidebarOpen(false));
+    });
 
-      document.addEventListener("click", (event) => {
-        if (!els.mobileSwitchMenu.classList.contains("hidden")) {
-          const inside = event.target.closest(".mobile-switch");
-          if (!inside) els.mobileSwitchMenu.classList.add("hidden");
-        }
-      });
-    }
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setSidebarOpen(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 980) setSidebarOpen(false);
+    });
 
     // Xarajat qo'shish formasi
     els.expenseForm?.addEventListener("submit", (event) => {
@@ -108,12 +106,7 @@
   }
 
   function render() {
-    // 1. Til va Salomlashish
-    if (els.mobileSwitchToggle) {
-      const map = { uz: "Bo'limlar", en: "Sections", ru: "Разделы" };
-      els.mobileSwitchToggle.textContent = map[app.state.language] || "Sections";
-    }
-
+    // 1. Salomlashish
     if (els.welcomeText) {
       els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
     }
@@ -213,6 +206,14 @@
 
       els.recentBody.appendChild(row);
     });
+  }
+
+  function isSidebarOpen() {
+    return document.body.classList.contains("sidebar-open");
+  }
+
+  function setSidebarOpen(open) {
+    document.body.classList.toggle("sidebar-open", Boolean(open));
   }
 })();
 
