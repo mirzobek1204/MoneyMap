@@ -117,15 +117,23 @@
         els.emptyText.textContent = sorted.length ? "" : app.t("expenses.empty");
     }
 
+    const labels = {
+      date: app.t("table.date"),
+      category: app.t("table.category"),
+      amount: app.t("table.amount"),
+      note: app.t("table.note"),
+      action: app.t("table.action"),
+    };
+
     for (const item of sorted) {
       const tr = document.createElement("tr");
       tr.className = "border-b hover:bg-gray-50 transition-colors"; // Tailwind klasslari bo'lsa ishlaydi
       tr.innerHTML = `
-        <td class="p-3">${item.date}</td>
-        <td class="p-3">${app.t(`category.${item.category}`)}</td>
-        <td class="p-3 font-bold text-red-600">-${app.formatCurrency(item.amount)}</td>
-        <td class="p-3 text-gray-500">${item.note || "-"}</td>
-        <td class="p-3 text-right">
+        <td class="p-3" data-label="${labels.date}">${item.date}</td>
+        <td class="p-3" data-label="${labels.category}">${app.t(`category.${item.category}`)}</td>
+        <td class="p-3 font-bold text-red-600" data-label="${labels.amount}">-${app.formatCurrency(item.amount)}</td>
+        <td class="p-3 text-gray-500" data-label="${labels.note}">${item.note || "-"}</td>
+        <td class="p-3 text-right" data-label="${labels.action}">
           <button class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs hover:bg-red-200" 
                   type="button" 
                   data-delete="${item.id}">

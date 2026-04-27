@@ -180,15 +180,23 @@
         els.recentEmpty.textContent = recent.length ? "" : app.t("expenses.empty");
     }
 
+    const labels = {
+      date: app.t("table.date"),
+      category: app.t("table.category"),
+      amount: app.t("table.amount"),
+      note: app.t("table.note"),
+      action: app.t("table.action"),
+    };
+
     recent.forEach(item => {
       const row = document.createElement("tr");
       row.className = "hover:bg-gray-50 transition-colors";
       row.innerHTML = `
-        <td class="px-4 py-3 text-sm">${item.date}</td>
-        <td class="px-4 py-3 text-sm font-medium">${app.t(`category.${item.category}`)}</td>
-        <td class="px-4 py-3 text-sm font-bold text-red-600">-${app.formatCurrency(item.amount)}</td>
-        <td class="px-4 py-3 text-sm text-gray-500">${item.note || "-"}</td>
-        <td class="px-4 py-3 text-right">
+        <td class="px-4 py-3 text-sm" data-label="${labels.date}">${item.date}</td>
+        <td class="px-4 py-3 text-sm font-medium" data-label="${labels.category}">${app.t(`category.${item.category}`)}</td>
+        <td class="px-4 py-3 text-sm font-bold text-red-600" data-label="${labels.amount}">-${app.formatCurrency(item.amount)}</td>
+        <td class="px-4 py-3 text-sm text-gray-500" data-label="${labels.note}">${item.note || "-"}</td>
+        <td class="px-4 py-3 text-right" data-label="${labels.action}">
           <button class="delete-btn p-1 hover:bg-red-100 rounded text-red-500 transition-colors" data-id="${item.id}">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
