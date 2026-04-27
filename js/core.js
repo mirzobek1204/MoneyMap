@@ -17,8 +17,12 @@ window.PulPulse = (() => {
       "login.subtitle": "Xarajatlaringizni sodda va tez kuzating.",
       "login.nameLabel": "Ismingiz",
       "login.namePlaceholder": "Ismingizni kiriting",
+      "login.passwordLabel": "Parol",
+      "login.passwordPlaceholder": "Parolni kiriting",
       "login.button": "Kirish",
       "login.continue": "{{name}} sifatida davom etish",
+      "login.invalid": "Login yoki parol xato.",
+      "login.tooShort": "Parol juda qisqa (kamida 4 belgi).",
 
       "nav.dashboard": "Dashboard",
       "nav.expenses": "Xarajatlar",
@@ -95,8 +99,12 @@ window.PulPulse = (() => {
       "login.subtitle": "Track your spending quickly and simply.",
       "login.nameLabel": "Name",
       "login.namePlaceholder": "Enter your name",
+      "login.passwordLabel": "Password",
+      "login.passwordPlaceholder": "Enter your password",
       "login.button": "Sign in",
       "login.continue": "Continue as {{name}}",
+      "login.invalid": "Invalid username or password.",
+      "login.tooShort": "Password is too short (min 4 chars).",
 
       "nav.dashboard": "Dashboard",
       "nav.expenses": "Expenses",
@@ -173,8 +181,12 @@ window.PulPulse = (() => {
       "login.subtitle": "Удобный трекер расходов.",
       "login.nameLabel": "Имя",
       "login.namePlaceholder": "Введите имя",
+      "login.passwordLabel": "Пароль",
+      "login.passwordPlaceholder": "Введите пароль",
       "login.button": "Войти",
       "login.continue": "Продолжить как {{name}}",
+      "login.invalid": "Неверный логин или пароль.",
+      "login.tooShort": "Пароль слишком короткий (минимум 4 символа).",
 
       "nav.dashboard": "Дашборд",
       "nav.expenses": "Расходы",
@@ -243,6 +255,64 @@ window.PulPulse = (() => {
       "toast.cleared": "Очищено!",
     },
   };
+
+  function usersKey() {
+    return "pp_users";
+  }
+
+  function readUsers() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(usersKey()) || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function writeUsers(map) {
+    localStorage.setItem(usersKey(), JSON.stringify(map));
+  }
+
+  async function sha256Hex(text) {
+    const raw = String(text ?? "");
+    const bytes = new TextEncoder().encode(raw);
+
+    // Prefer WebCrypto when available (secure contexts like GitHub Pages).
+    if (globalThis.crypto?.subtle && globalThis.isSecureContext) {
+      const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+      return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    // Fallback (non-cryptographic) to keep local file previews working.
+    let hash = 2166136261;
+    for (const b of bytes) {
+      hash ^= b;
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return `fnv1a:${hash.toString(16)}`;
+  }
+
+  async function loginWithPassword(username, password) {
+    const name = String(username ?? "").trim();
+    const pass = String(password ?? "");
+    if (!name) return { ok: false, reason: "empty_name" };
+    if (pass.length < 4) return { ok: false, reason: "too_short" };
+
+    const users = readUsers();
+    const key = name.toLowerCase();
+    const hash = await sha256Hex(pass);
+
+    if (users[key]?.hash) {
+      if (users[key].hash !== hash) return { ok: false, reason: "invalid" };
+      setCurrentUser(name);
+      return { ok: true, created: false };
+    }
+
+    users[key] = { name, hash, createdAt: new Date().toISOString() };
+    writeUsers(users);
+    setCurrentUser(name);
+    return { ok: true, created: true };
+  }
 
   function todayIso() {
     return new Date().toISOString().split("T")[0];
@@ -522,6 +592,7 @@ window.PulPulse = (() => {
     applyI18n,
     setLanguage,
     bindLanguageSelect,
+    loginWithPassword,
 
     requireAuth,
     setCurrentUser,
