@@ -1,8 +1,8 @@
-﻿(() => {
+﻿(async () => {
   const app = window.PulPulse;
-  
+
   // 1. Avtorizatsiyani tekshirish
-  const user = app.requireAuth();
+  const user = await app.requireAuth();
   if (!user) return;
 
   // 2. UI elementlarini xavfsiz tanlash
@@ -17,6 +17,9 @@
     expenseForm: document.getElementById("expenseForm"),
     dateInput: document.getElementById("dateInput"),
     amountInput: document.getElementById("amountInput"),
+    currencyInput: document.getElementById("currencyInput"),
+    currencyPreview: document.getElementById("currencyPreview"),
+    amountPreview: document.getElementById("amountPreview"),
     categoryInput: document.getElementById("categoryInput"),
     noteInput: document.getElementById("noteInput"),
     budgetInput: document.getElementById("budgetInput"),
@@ -36,10 +39,10 @@
   if (els.languageSelect) app.bindLanguageSelect(els.languageSelect);
   app.applyI18n();
   bindEvents();
-  render();
+  await render();
 
   // Til o'zgarganda qayta chizish
-  document.addEventListener("pulpulse:lang", render);
+  document.addEventListener("pulpulse:lang", () => void render());
 
   function bindEvents() {
     // Logout funksiyalari
@@ -60,26 +63,45 @@
       if (window.innerWidth > 980) setSidebarOpen(false);
     });
 
+    function updateAmountPreview() {
+      const amount = Number(els.amountInput?.value || 0);
+      const currency = String(els.currencyInput?.value || app.getCurrentCurrency() || "UZS").toUpperCase();
+      if (els.currencyPreview) els.currencyPreview.textContent = currency;
+      if (els.amountPreview) {
+        els.amountPreview.textContent = amount > 0 ? app.formatCurrency(amount, currency) : app.formatCurrency(0, currency);
+      }
+    }
+
+    els.amountInput?.addEventListener("input", updateAmountPreview);
+    els.currencyInput?.addEventListener("change", async () => {
+      const currency = String(els.currencyInput.value || "UZS").toUpperCase();
+      await app.saveUserCurrency(user, currency);
+      updateAmountPreview();
+      await render();
+    });
+
     // Xarajat qo'shish formasi
-    els.expenseForm?.addEventListener("submit", (event) => {
+    els.expenseForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const date = els.dateInput.value;
       const amount = Number(els.amountInput.value);
       const category = app.normalizeCategory(els.categoryInput.value);
       const note = els.noteInput.value.trim();
+      const currency = String(els.currencyInput?.value || app.getCurrentCurrency() || "UZS").toUpperCase();
 
       if (!date || !Number.isFinite(amount) || amount <= 0 || !category) {
         alert(app.t("expense.invalid"));
         return;
       }
 
-      app.addExpense(user, { date, amount, category, note });
+      await app.addExpense(user, { date, amount, category, note, currency });
       
       // Formani tozalash
       els.amountInput.value = "";
       els.noteInput.value = "";
+      updateAmountPreview();
       
-      render();
+      await render();
       app.showToast(app.t("toast.saved"));
     });
 
@@ -89,23 +111,24 @@
       if (quick && els.amountInput) {
         els.amountInput.value = quick.dataset.quick;
         els.amountInput.focus();
+        if (els.amountInput) els.amountInput.dispatchEvent(new Event("input"));
       }
     });
 
     // Budgetni saqlash
-    els.saveBudgetBtn?.addEventListener("click", () => {
+    els.saveBudgetBtn?.addEventListener("click", async () => {
       const value = Number(els.budgetInput.value);
       if (!Number.isFinite(value) || value < 0) {
         alert(app.t("budget.invalid"));
         return;
       }
-      app.setBudget(user, value);
-      render();
+      await app.setBudget(user, value);
+      await render();
       app.showToast(app.t("toast.budgetSaved"));
     });
   }
 
-  function render() {
+  async function render() {
     // 1. Salomlashish
     if (els.welcomeText) {
       els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
@@ -113,33 +136,41 @@
     
     if (els.dateInput) els.dateInput.value = app.todayIso();
 
+    const currency = app.getCurrentCurrency();
+    if (els.currencyInput) els.currencyInput.value = currency;
+    if (els.currencyPreview) els.currencyPreview.textContent = currency;
+    if (els.amountPreview) {
+      const amount = Number(els.amountInput?.value || 0);
+      els.amountPreview.textContent = app.formatCurrency(amount > 0 ? amount : 0, currency);
+    }
+
     // 2. Statistika
-    const stats = app.getStats(user);
-    if (els.todayTotal) els.todayTotal.textContent = app.formatCurrency(stats.today);
-    if (els.monthTotal) els.monthTotal.textContent = app.formatCurrency(stats.month);
-    if (els.allTotal) els.allTotal.textContent = app.formatCurrency(stats.total);
+    const stats = await app.getStats(user);
+    if (els.todayTotal) els.todayTotal.textContent = app.formatCurrency(stats.today, currency);
+    if (els.monthTotal) els.monthTotal.textContent = app.formatCurrency(stats.month, currency);
+    if (els.allTotal) els.allTotal.textContent = app.formatCurrency(stats.total, currency);
 
     // 3. Challenge va Insight
-    const challenge = app.getChallenge(user);
+    const challenge = await app.getChallenge(user);
     if (els.challengeText) {
       els.challengeText.textContent = `${app.t("dashboard.challengePrefix")} ${challenge}`;
     }
     
     if (els.streakText) {
       els.streakText.textContent = app.t("dashboard.streak", {
-        expense: String(app.getExpenseStreak(user)),
-        visit: String(app.getVisitStreak(user)),
+        expense: String(await app.getExpenseStreak(user)),
+        visit: String(await app.getVisitStreak(user)),
       });
     }
 
     if (els.insightText) {
-      els.insightText.textContent = app.getInsight(user);
+      els.insightText.textContent = await app.getInsight(user);
     }
 
     // 4. Budget vizualizatsiyasi
-    const budget = app.getBudget(user);
+    const budget = await app.getBudget(user);
     if (els.budgetInput) els.budgetInput.value = budget > 0 ? String(budget) : "";
-    
+
     const progress = budget > 0 ? (stats.month / budget) * 100 : 0;
     if (els.budgetBar) {
       els.budgetBar.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
@@ -151,33 +182,33 @@
     }
 
     if (els.budgetUsedText) {
-      els.budgetUsedText.textContent = app.t("budget.used", { amount: app.formatCurrency(stats.month) });
+      els.budgetUsedText.textContent = app.t("budget.used", { amount: app.formatCurrency(stats.month, currency) });
     }
 
     if (els.budgetLeftText) {
       if (budget <= 0) {
         els.budgetLeftText.textContent = app.t("budget.unset");
       } else if (stats.month <= budget) {
-        els.budgetLeftText.textContent = app.t("budget.left", { amount: app.formatCurrency(budget - stats.month) });
+        els.budgetLeftText.textContent = app.t("budget.left", { amount: app.formatCurrency(budget - stats.month, currency) });
       } else {
-        els.budgetLeftText.textContent = app.t("budget.over", { amount: app.formatCurrency(stats.month - budget) });
+        els.budgetLeftText.textContent = app.t("budget.over", { amount: app.formatCurrency(stats.month - budget, currency) });
       }
     }
 
     // 5. Oxirgi amallar jadvali (O'chirish tugmasi bilan)
-    renderRecentTransactions(user);
+    await renderRecentTransactions(user, currency);
   }
 
-  function renderRecentTransactions(user) {
+  async function renderRecentTransactions(user, currency) {
     if (!els.recentBody) return;
 
-    const recent = [...app.getExpenses(user)]
+    const recent = (await app.getExpenses(user))
       .sort((a, b) => b.date.localeCompare(a.date))
       .slice(0, 8);
 
     els.recentBody.innerHTML = "";
     if (els.recentEmpty) {
-        els.recentEmpty.textContent = recent.length ? "" : app.t("expenses.empty");
+      els.recentEmpty.textContent = recent.length ? "" : app.t("expenses.empty");
     }
 
     const labels = {
@@ -188,13 +219,13 @@
       action: app.t("table.action"),
     };
 
-    recent.forEach(item => {
+    recent.forEach((item) => {
       const row = document.createElement("tr");
       row.className = "hover:bg-gray-50 transition-colors";
       row.innerHTML = `
         <td class="px-4 py-3 text-sm" data-label="${labels.date}">${item.date}</td>
         <td class="px-4 py-3 text-sm font-medium" data-label="${labels.category}">${app.t(`category.${item.category}`)}</td>
-        <td class="px-4 py-3 text-sm font-bold text-red-600" data-label="${labels.amount}">-${app.formatCurrency(item.amount)}</td>
+        <td class="px-4 py-3 text-sm font-bold text-red-600" data-label="${labels.amount}">-${app.formatCurrency(item.amount, item.currency || currency)}</td>
         <td class="px-4 py-3 text-sm text-gray-500" data-label="${labels.note}">${item.note || "-"}</td>
         <td class="px-4 py-3 text-right" data-label="${labels.action}">
           <button class="delete-btn p-1 hover:bg-red-100 rounded text-red-500 transition-colors" data-id="${item.id}">
@@ -203,11 +234,10 @@
         </td>
       `;
 
-      // O'chirish hodisasi
-      row.querySelector(".delete-btn").addEventListener("click", () => {
+      row.querySelector(".delete-btn")?.addEventListener("click", async () => {
         if (confirm(app.t("danger.confirm") || "Ushbu amalni o'chirmoqchimisiz?")) {
-          app.deleteExpense(user, item.id);
-          render();
+          await app.deleteExpense(user, item.id);
+          await render();
           app.showToast(app.t("toast.deleted"));
         }
       });

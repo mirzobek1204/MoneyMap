@@ -21,6 +21,13 @@ PulPulse endi alohida sahifalarga bo'lingan:
 2. Ism kiriting va `Kirish` bosing.
 3. Dashboard va Expenses sahifalaridan foydalaning.
 
+## Firebase sozlash
+
+1. Firebase konsolida yangi loyiha yarating.
+2. Firestore va Authentication xizmatlarini yoqing.
+3. `MoneyMap/js/firebase.js` faylida `firebaseConfig` maydonlarini o'z loyihangiz ma'lumotlari bilan to'ldiring.
+4. Sahifalarni qayta yuklang va bir xil username/parol bilan boshqa qurilmada ma'lumotlar saqlanishini tekshiring.
+
 ## GitHub ga yuklash (manual)
 
 ```bash

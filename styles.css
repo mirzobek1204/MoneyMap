@@ -239,6 +239,41 @@ select {
     color-scheme: dark;
 }
 
+.amount-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.currency-pill {
+    flex: 0 0 auto;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(0, 255, 163, 0.12);
+    border: 1px solid rgba(0, 255, 163, 0.25);
+    color: #d8fff2;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.amount-summary {
+    grid-column: span 3;
+}
+
+.amount-preview-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(0, 255, 163, 0.22);
+    border-radius: 20px;
+    padding: 18px 20px;
+    color: #eef9f3;
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.span-3 { grid-column: span 3; }
+
 select option {
     background-color: #0b1220;
     color: #ffffff;

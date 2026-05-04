@@ -90,7 +90,19 @@
             </label>
             <label>
               <span data-i18n="expense.amount">Summa</span>
-              <input type="number" id="amountInput" placeholder="0" />
+              <div class="amount-input-row">
+                <span class="currency-pill" id="currencyPreview">UZS</span>
+                <input type="number" id="amountInput" placeholder="0" />
+              </div>
+            </label>
+            <label>
+              <span data-i18n="expense.currency">Valyuta</span>
+              <select id="currencyInput">
+                <option value="UZS" data-i18n="currency.uzs">so'm</option>
+                <option value="USD" data-i18n="currency.usd">USD</option>
+                <option value="RUB" data-i18n="currency.rub">RUB</option>
+                <option value="EUR" data-i18n="currency.eur">EUR</option>
+              </select>
             </label>
             <label>
               <span data-i18n="expense.category">Kategoriya</span>
@@ -107,6 +119,10 @@
               <span data-i18n="expense.note">Izoh</span>
               <input type="text" id="noteInput" placeholder="..." />
             </label>
+            <div class="amount-summary span-3">
+              <p class="amount-summary-label" data-i18n="expense.previewLabel">Ko'rinish</p>
+              <div id="amountPreview" class="amount-preview-card">0 UZS</div>
+            </div>
             <button class="glow-btn" type="submit" data-i18n="expense.save">Saqlash</button>
           </form>
         </section>
@@ -156,6 +172,9 @@
 
     <div id="toast" class="toast"></div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
     <script src="js/core.js"></script>
     <script src="js/dashboard.js"></script>
   </body>

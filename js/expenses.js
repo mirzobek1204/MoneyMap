@@ -1,8 +1,8 @@
-﻿(() => {
+﻿(async () => {
   const app = window.PulPulse;
-  
+
   // 1. Avtorizatsiyani tekshirish
-  const user = app.requireAuth();
+  const user = await app.requireAuth();
   if (!user) return;
 
   // 2. UI elementlarini xavfsiz tanlash (Null-check bilan)
@@ -28,10 +28,10 @@
   if (els.languageSelect) app.bindLanguageSelect(els.languageSelect);
   app.applyI18n();
   bindEvents();
-  render();
+  await render();
 
   // Til o'zgarganda sahifani yangilash
-  document.addEventListener("pulpulse:lang", render);
+  document.addEventListener("pulpulse:lang", () => void render());
 
   function bindEvents() {
     // Logoutlar
@@ -53,54 +53,51 @@
     });
 
     // Filtrni qo'llash
-    els.filterForm?.addEventListener("submit", (event) => {
+    els.filterForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
       filters.fromDate = els.fromDate?.value || "";
       filters.toDate = els.toDate?.value || "";
       filters.category = els.filterCategory ? app.normalizeCategory(els.filterCategory.value) : "";
-      renderTable();
+      await renderTable();
     });
 
     // Jadval ichidagi o'chirish tugmasi (Event Delegation)
-    els.tableBody?.addEventListener("click", (event) => {
+    els.tableBody?.addEventListener("click", async (event) => {
       const btn = event.target.closest("[data-delete]");
       if (!btn) return;
       
-      // O'chirishdan oldin tasdiqlash so'rash (Expert tavsiyasi)
       if (confirm(app.t("danger.confirm") || "O'chirilsinmi?")) {
-        app.deleteExpense(user, btn.dataset.delete);
-        render(); // RenderTable emas, render chaqiriladi (to'liq UI yangilanishi uchun)
+        await app.deleteExpense(user, btn.dataset.delete);
+        await render();
         app.showToast(app.t("toast.deleted"));
       }
     });
 
     // Barcha ma'lumotlarni tozalash
-    els.clearBtn?.addEventListener("click", () => {
+    els.clearBtn?.addEventListener("click", async () => {
       if (!confirm(app.t("danger.confirm"))) return;
-      app.clearCurrentUserData(user);
-      render();
+      await app.clearCurrentUserData(user);
+      await render();
       app.showToast(app.t("toast.cleared"));
     });
   }
 
-  function render() {
+  async function render() {
     if (els.welcomeText) {
       els.welcomeText.textContent = app.t("dashboard.welcome", { name: user });
     }
     
-    renderTable();
+    await renderTable();
   }
 
-  function renderTable() {
+  async function renderTable() {
     if (!els.tableBody) return;
 
-    const rows = applyFilters(app.getExpenses(user));
+    const rows = applyFilters(await app.getExpenses(user));
     
-    // Saralash: Birinchi sana bo'yicha, keyin yaratilgan vaqti bo'yicha (eng yangilari tepada)
     const sorted = [...rows].sort((a, b) => {
       if (a.date === b.date) {
-          // core.js dacreatedAt bo'lsa shuni ishlatadi, aks holda id bo'yicha
-          return (b.createdAt || b.id).localeCompare(a.createdAt || a.id);
+        return (b.createdAt || b.id).localeCompare(a.createdAt || a.id);
       }
       return b.date.localeCompare(a.date);
     });
@@ -108,13 +105,11 @@
     els.tableBody.innerHTML = "";
     
     if (els.filteredText) {
-        els.filteredText.textContent = app.t("expenses.filtered", { 
-            amount: app.formatCurrency(sumBy(sorted)) 
-        });
+      els.filteredText.textContent = app.t("expenses.filtered", { amount: app.formatCurrency(sumBy(sorted)) });
     }
 
     if (els.emptyText) {
-        els.emptyText.textContent = sorted.length ? "" : app.t("expenses.empty");
+      els.emptyText.textContent = sorted.length ? "" : app.t("expenses.empty");
     }
 
     const labels = {
@@ -127,11 +122,11 @@
 
     for (const item of sorted) {
       const tr = document.createElement("tr");
-      tr.className = "border-b hover:bg-gray-50 transition-colors"; // Tailwind klasslari bo'lsa ishlaydi
+      tr.className = "border-b hover:bg-gray-50 transition-colors";
       tr.innerHTML = `
         <td class="p-3" data-label="${labels.date}">${item.date}</td>
         <td class="p-3" data-label="${labels.category}">${app.t(`category.${item.category}`)}</td>
-        <td class="p-3 font-bold text-red-600" data-label="${labels.amount}">-${app.formatCurrency(item.amount)}</td>
+        <td class="p-3 font-bold text-red-600" data-label="${labels.amount}">-${app.formatCurrency(item.amount, item.currency)}</td>
         <td class="p-3 text-gray-500" data-label="${labels.note}">${item.note || "-"}</td>
         <td class="p-3 text-right" data-label="${labels.action}">
           <button class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs hover:bg-red-200" 

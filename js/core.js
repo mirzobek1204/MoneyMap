@@ -5,6 +5,9 @@ window.PulPulse = (() => {
   const state = {
     user: localStorage.getItem("pp_user") || null,
     language: localStorage.getItem("pp_lang") || FALLBACK_LANG,
+    settings: {
+      currency: localStorage.getItem("pp_currency") || "UZS",
+    },
   };
 
   const translations = {
@@ -43,9 +46,14 @@ window.PulPulse = (() => {
       "expense.invalid": "Iltimos, sana va summani to'g'ri kiriting.",
       "expense.date": "Sana",
       "expense.amount": "Summa",
-      "expense.category": "Kategoriya",
+      "expense.currency": "Valyuta",
       "expense.note": "Izoh",
       "expense.save": "Saqlash",
+      "expense.previewLabel": "Ko'rinish",
+      "currency.uzs": "so'm",
+      "currency.usd": "USD",
+      "currency.rub": "RUB",
+      "currency.eur": "EUR",
 
       "budget.title": "Oylik limit",
       "budget.placeholder": "Oylik limit",
@@ -125,9 +133,14 @@ window.PulPulse = (() => {
       "expense.invalid": "Please enter a valid date and amount.",
       "expense.date": "Date",
       "expense.amount": "Amount",
-      "expense.category": "Category",
+      "expense.currency": "Currency",
       "expense.note": "Note",
       "expense.save": "Save",
+      "expense.previewLabel": "Preview",
+      "currency.uzs": "UZS",
+      "currency.usd": "USD",
+      "currency.rub": "RUB",
+      "currency.eur": "EUR",
 
       "budget.title": "Monthly budget",
       "budget.placeholder": "Monthly budget",
@@ -207,9 +220,14 @@ window.PulPulse = (() => {
       "expense.invalid": "Введите корректную дату и сумму.",
       "expense.date": "Дата",
       "expense.amount": "Сумма",
-      "expense.category": "Категория",
+      "expense.currency": "Валюта",
       "expense.note": "Комментарий",
       "expense.save": "Сохранить",
+      "expense.previewLabel": "Просмотр",
+      "currency.uzs": "сум",
+      "currency.usd": "USD",
+      "currency.rub": "RUB",
+      "currency.eur": "EUR",
 
       "budget.title": "Месячный лимит",
       "budget.placeholder": "Месячный лимит",
@@ -256,6 +274,43 @@ window.PulPulse = (() => {
     },
   };
 
+  function useFirebase() {
+    return Boolean(window.PulPulseFirebase?.enabled);
+  }
+
+  function getCurrentCurrency() {
+    return state.settings.currency || "UZS";
+  }
+
+  async function loadUserSettings(user) {
+    if (useFirebase()) {
+      const settings = await window.PulPulseFirebase.getUserSettings(user);
+      state.settings = {
+        currency: String(settings?.currency || "UZS").toUpperCase(),
+      };
+    } else {
+      state.settings = {
+        currency: localStorage.getItem("pp_currency") || "UZS",
+      };
+    }
+    return state.settings;
+  }
+
+  async function saveUserCurrency(user, currency) {
+    const nextCurrency = String(currency || "UZS").toUpperCase();
+    state.settings.currency = nextCurrency;
+
+    if (useFirebase()) {
+      await window.PulPulseFirebase.setUserSettings(user, {
+        currency: nextCurrency,
+      });
+    } else {
+      localStorage.setItem("pp_currency", nextCurrency);
+    }
+
+    return nextCurrency;
+  }
+
   function usersKey() {
     return "pp_users";
   }
@@ -298,19 +353,30 @@ window.PulPulse = (() => {
     if (!name) return { ok: false, reason: "empty_name" };
     if (pass.length < 4) return { ok: false, reason: "too_short" };
 
-    const users = readUsers();
-    const key = name.toLowerCase();
     const hash = await sha256Hex(pass);
+    const key = name.toLowerCase();
 
-    if (users[key]?.hash) {
-      if (users[key].hash !== hash) return { ok: false, reason: "invalid" };
+    if (useFirebase()) {
+      const result = await window.PulPulseFirebase.loginWithPassword(key, hash);
+      if (!result.ok) return result;
       setCurrentUser(name);
+      await loadUserSettings(key);
+      return result;
+    }
+
+    const users = readUsers();
+    const existing = users[key];
+    if (existing?.hash) {
+      if (existing.hash !== hash) return { ok: false, reason: "invalid" };
+      setCurrentUser(name);
+      await loadUserSettings(name);
       return { ok: true, created: false };
     }
 
     users[key] = { name, hash, createdAt: new Date().toISOString() };
     writeUsers(users);
     setCurrentUser(name);
+    await loadUserSettings(name);
     return { ok: true, created: true };
   }
 
@@ -398,7 +464,11 @@ window.PulPulse = (() => {
     return `pp_visit_streak_${user}`;
   }
 
-  function getExpenses(user) {
+  async function getExpenses(user) {
+    if (useFirebase()) {
+      return await window.PulPulseFirebase.getExpenses(user);
+    }
+
     try {
       const parsed = JSON.parse(localStorage.getItem(expensesKey(user)) || "[]");
       return Array.isArray(parsed) ? parsed : [];
@@ -411,31 +481,45 @@ window.PulPulse = (() => {
     localStorage.setItem(expensesKey(user), JSON.stringify(list));
   }
 
-  function addExpense(user, data) {
+  async function addExpense(user, data) {
     const date = String(data?.date || "").trim();
     const amount = Number(data?.amount);
     const category = normalizeCategory(data?.category);
     const note = String(data?.note || "").trim();
+    const currency = String(data?.currency || getCurrentCurrency()).toUpperCase();
 
-    const next = getExpenses(user);
-    next.push({
+    const entry = {
       id: crypto?.randomUUID ? crypto.randomUUID() : Date.now().toString(),
       createdAt: new Date().toISOString(),
       date,
       amount,
       category,
       note,
-    });
+      currency,
+    };
+
+    if (useFirebase()) {
+      await window.PulPulseFirebase.addExpense(user, entry);
+      return;
+    }
+
+    const next = await getExpenses(user);
+    next.push(entry);
     setExpenses(user, next);
   }
 
-  function deleteExpense(user, id) {
-    const next = getExpenses(user).filter((e) => e.id !== id);
+  async function deleteExpense(user, id) {
+    if (useFirebase()) {
+      await window.PulPulseFirebase.deleteExpense(user, id);
+      return;
+    }
+
+    const next = (await getExpenses(user)).filter((e) => e.id !== id);
     setExpenses(user, next);
   }
 
-  function getStats(user) {
-    const list = getExpenses(user);
+  async function getStats(user) {
+    const list = await getExpenses(user);
     const today = todayIso();
     const monthPrefix = today.slice(0, 7);
 
@@ -453,23 +537,63 @@ window.PulPulse = (() => {
     return { today: todaySum, month: monthSum, total: totalSum };
   }
 
-  function formatCurrency(num) {
+  function formatCurrency(num, currency = null) {
+    const code = String(currency || getCurrentCurrency() || "UZS").toUpperCase();
     const locale = LOCALES[state.language] || LOCALES.en;
     const normalized = Number.isFinite(Number(num)) ? Number(num) : 0;
-    return `${new Intl.NumberFormat(locale).format(normalized)} ${t("currency.suffix")}`;
+
+    if (code === "UZS") {
+      return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(normalized)} ${t("currency.suffix")}`;
+    }
+
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: code,
+      minimumFractionDigits: 0,
+    }).format(normalized);
   }
 
-  function setBudget(user, value) {
+  async function setBudget(user, value) {
+    if (useFirebase()) {
+      await window.PulPulseFirebase.setBudget(user, value);
+      return;
+    }
     localStorage.setItem(budgetKey(user), String(Number(value || 0)));
   }
 
-  function getBudget(user) {
+  async function getBudget(user) {
+    if (useFirebase()) {
+      return await window.PulPulseFirebase.getBudget(user);
+    }
     const raw = Number(localStorage.getItem(budgetKey(user)) || 0);
     return Number.isFinite(raw) ? raw : 0;
   }
 
-  function touchVisit(user) {
+  async function touchVisit(user) {
     const today = todayIso();
+
+    if (useFirebase()) {
+      const profile = await window.PulPulseFirebase.getUserDoc(user);
+      const last = String(profile?.lastVisit || "");
+      let streak = Number(profile?.visitStreak || 0);
+
+      if (!last) {
+        streak = 1;
+      } else if (last === today) {
+        streak = Math.max(streak, 1);
+      } else if (last === yesterdayIso()) {
+        streak = Math.max(streak + 1, 2);
+      } else {
+        streak = 1;
+      }
+
+      await window.PulPulseFirebase.setUserSettings(user, {
+        lastVisit: today,
+        visitStreak: streak,
+      });
+      return streak;
+    }
+
     const last = localStorage.getItem(visitLastKey(user));
     let streak = Number(localStorage.getItem(visitStreakKey(user)) || 0);
 
@@ -488,13 +612,17 @@ window.PulPulse = (() => {
     return streak;
   }
 
-  function getVisitStreak(user) {
+  async function getVisitStreak(user) {
+    if (useFirebase()) {
+      const profile = await window.PulPulseFirebase.getUserSettings(user);
+      return Number(profile.visitStreak || 0);
+    }
     const streak = Number(localStorage.getItem(visitStreakKey(user)) || 0);
     return Number.isFinite(streak) ? streak : 0;
   }
 
-  function getExpenseStreak(user) {
-    const dates = new Set(getExpenses(user).map((e) => e.date).filter(Boolean));
+  async function getExpenseStreak(user) {
+    const dates = new Set((await getExpenses(user)).map((e) => e.date).filter(Boolean));
     let streak = 0;
     const cursor = new Date();
     while (streak < 3650) {
@@ -506,9 +634,9 @@ window.PulPulse = (() => {
     return streak;
   }
 
-  function getChallenge(user) {
-    const stats = getStats(user);
-    const budget = getBudget(user);
+  async function getChallenge(user) {
+    const stats = await getStats(user);
+    const budget = await getBudget(user);
     if (budget > 0) {
       const left = budget - stats.month;
       if (left > 0) return `${t("budget.left", { amount: formatCurrency(left) })}`;
@@ -518,9 +646,9 @@ window.PulPulse = (() => {
     return `${t("stats.today")}: ${formatCurrency(stats.today)} • ${t("expense.save")} < ${formatCurrency(target)}`;
   }
 
-  function getInsight(user) {
-    const stats = getStats(user);
-    const list = getExpenses(user);
+  async function getInsight(user) {
+    const stats = await getStats(user);
+    const list = await getExpenses(user);
     if (!list.length) return t("dashboard.recentEmpty");
 
     const monthPrefix = todayIso().slice(0, 7);
@@ -537,7 +665,22 @@ window.PulPulse = (() => {
     return `${t("stats.month")}: ${formatCurrency(stats.month)} • ${t(`category.${top[0]}`)}: ${formatCurrency(top[1])}`;
   }
 
-  function clearCurrentUserData(user) {
+  async function clearCurrentUserData(user) {
+    if (useFirebase()) {
+      const normalizedUser = String(user || "").toLowerCase();
+      const expRef = firebase.firestore().collection("users").doc(normalizedUser).collection("expenses");
+      const snapshot = await expRef.get();
+      const batch = firebase.firestore().batch();
+      snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+      await batch.commit();
+      await window.PulPulseFirebase.setUserSettings(normalizedUser, {
+        budget: 0,
+        lastVisit: "",
+        visitStreak: 0,
+      });
+      return;
+    }
+
     localStorage.removeItem(expensesKey(user));
     localStorage.removeItem(budgetKey(user));
     localStorage.removeItem(visitLastKey(user));
@@ -559,12 +702,13 @@ window.PulPulse = (() => {
     toast._ppTimer = setTimeout(() => toast.classList.remove("show"), 2200);
   }
 
-  function requireAuth() {
+  async function requireAuth() {
     if (!state.user) {
       location.href = "index.html";
       return null;
     }
-    touchVisit(state.user);
+    await touchVisit(state.user);
+    await loadUserSettings(state.user);
     return state.user;
   }
 
@@ -615,6 +759,9 @@ window.PulPulse = (() => {
     getInsight,
     getExpenseStreak,
     getVisitStreak,
+
+    saveUserCurrency,
+    getCurrentCurrency,
 
     clearCurrentUserData,
     showToast,
