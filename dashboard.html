@@ -1,181 +1,370 @@
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0Q0R8GXKMJ"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0Q0R8GXKMJ');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-0Q0R8GXKMJ');
 </script>
-
-
 <!doctype html>
 <html lang="uz">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PulPulse - Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body class="page-app">
-    <div class="bg-layer"></div>
-    <div class="bg-flare flare-app-a"></div>
-    <div class="bg-flare flare-app-c"></div>
-    <div id="navBackdrop" class="nav-backdrop" aria-hidden="true"></div>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>PulPulse - Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: #0a0a0f; color: #fff; min-height: 100dvh; overflow-x: hidden; }
+.bg-static { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.bg-orb { position: absolute; border-radius: 50%; }
+.orb-1 { top: -10%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(99,74,255,0.15) 0%, transparent 70%); }
+.orb-2 { bottom: 10%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(0,200,140,0.08) 0%, transparent 70%); }
+.shell { position: relative; z-index: 1; display: flex; min-height: 100dvh; }
+.sidebar { width: 220px; flex-shrink: 0; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.07); padding: 1.75rem 1.25rem; display: flex; flex-direction: column; gap: 2rem; position: sticky; top: 0; height: 100dvh; }
+.logo { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+.logo span { color: #7c5cfc; }
+.nav-links { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.nav-link { display: flex; align-items: center; gap: 10px; padding: 0.65rem 0.85rem; border-radius: 10px; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+.nav-link:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.nav-link.active { background: rgba(124,92,252,0.15); color: #a98fff; }
+.btn-logout { background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.2); color: rgba(255,100,100,0.8); border-radius: 10px; padding: 0.65rem; font-size: 0.875rem; font-family: inherit; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.btn-logout:hover { background: rgba(255,80,80,0.15); color: #ff6464; }
+.main { flex: 1; padding: 1.75rem 1.5rem; max-width: 800px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; gap: 1rem; }
+.menu-btn { display: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 10px; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+.topbar-title { flex: 1; }
+.topbar-title h1 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
+.topbar-title p { font-size: 0.825rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.lang-box { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+.lang-box select { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 8px; font-size: 0.8rem; font-family: inherit; cursor: pointer; outline: none; }
+.lang-box select:focus { border-color: #7c5cfc; }
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 1rem 1.1rem; }
+.stat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.4); margin-bottom: 0.35rem; }
+.stat-value { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; word-break: break-all; }
+.panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 1.5rem; margin-bottom: 1.25rem; }
+.panel h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; color: rgba(255,255,255,0.85); }
+.amount-hero { text-align: center; margin-bottom: 1.5rem; }
+.amount-display { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1; min-height: 3.5rem; transition: color 0.2s; }
+.amount-display.has-value { color: #a98fff; }
+.amount-hint { font-size: 0.8rem; color: rgba(255,255,255,0.3); margin-top: 6px; }
+.pills-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.pill { padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+.pill.active { background: rgba(124,92,252,0.2); border-color: rgba(124,92,252,0.5); color: #c4aeff; }
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+.num-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 1.1rem; font-weight: 500; height: 56px; cursor: pointer; transition: background 0.1s, transform 0.1s; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; }
+.num-btn:active { background: rgba(124,92,252,0.2); transform: scale(0.95); }
+.num-btn.del { color: rgba(255,100,100,0.7); font-size: 1.3rem; }
+.num-btn.zero { grid-column: span 2; }
+.extra-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-group label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.35); }
+.field-group input, .field-group select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; padding: 0.7rem 0.85rem; color: #fff; font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.2s; width: 100%; }
+.field-group input:focus, .field-group select:focus { border-color: #7c5cfc; }
+.field-group input::placeholder { color: rgba(255,255,255,0.2); }
+.field-group select option { background: #1a1a2e; }
+.note-field { grid-column: span 2; }
+.btn-save { width: 100%; background: linear-gradient(135deg, #7c5cfc, #5a3fd0); border: none; border-radius: 14px; padding: 0.95rem; color: #fff; font-size: 1rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity 0.2s, transform 0.15s; -webkit-tap-highlight-color: transparent; }
+.btn-save:active { opacity: 0.85; transform: scale(0.98); }
+.budget-row { display: flex; gap: 10px; align-items: center; margin-bottom: 1rem; }
+.budget-row input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; padding: 0.7rem 1rem; color: #fff; font-size: 0.9rem; font-family: inherit; outline: none; }
+.budget-row input:focus { border-color: #7c5cfc; }
+.budget-row input::placeholder { color: rgba(255,255,255,0.2); }
+.btn-set { background: rgba(124,92,252,0.2); border: 1px solid rgba(124,92,252,0.35); border-radius: 10px; padding: 0.7rem 1rem; color: #a98fff; font-size: 0.875rem; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.btn-set:hover { background: rgba(124,92,252,0.3); }
+.budget-track { height: 8px; background: rgba(255,255,255,0.07); border-radius: 100px; overflow: hidden; margin-bottom: 0.75rem; }
+.budget-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #7c5cfc, #a98fff); transition: width 0.6s ease; }
+.budget-meta { display: flex; justify-content: space-between; }
+.budget-meta span { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+.insight-chips { display: flex; flex-direction: column; gap: 10px; }
+.insight-chip { display: flex; align-items: flex-start; gap: 10px; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 0.75rem 1rem; border: 1px solid rgba(255,255,255,0.06); }
+.insight-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+.insight-text { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.5; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 400px; }
+th { text-align: left; padding: 0.6rem 0.75rem; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.06); }
+td { padding: 0.7rem 0.75rem; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.04); }
+tr:last-child td { border-bottom: none; }
+.btn-delete { background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.15); color: rgba(255,100,100,0.7); border-radius: 8px; padding: 4px 10px; font-size: 0.75rem; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+.btn-delete:hover { background: rgba(255,80,80,0.15); }
+.empty-state { text-align: center; padding: 2rem; color: rgba(255,255,255,0.25); font-size: 0.875rem; }
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(255,255,255,0.1); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.875rem; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 9999; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; }
+@media (max-width: 680px) {
+  .sidebar { position: fixed; left: -220px; top: 0; height: 100dvh; z-index: 100; transition: left 0.3s ease; background: #0f0f1a; border-right-color: rgba(255,255,255,0.1); }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay.show { display: block; }
+  .menu-btn { display: flex; }
+  .main { padding: 1.25rem 1rem; }
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-card { padding: 0.75rem 0.75rem; }
+  .stat-value { font-size: 1rem; }
+  .amount-display { font-size: 2.5rem; }
+  .extra-fields { grid-template-columns: 1fr; }
+  .note-field { grid-column: span 1; }
+  .lang-box label { display: none; }
+}
+</style>
+</head>
+<body class="page-app">
 
-    <div class="shell">
-      <aside class="sidebar premium-panel">
-        <p class="logo-pill large" data-i18n="app.name">PulPulse</p>
-        <nav class="menu">
-          <a class="menu-link active" href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
-          <a class="menu-link" href="expenses.html" data-i18n="nav.expenses">Xarajatlar</a>
-        </nav>
-        <button id="logoutBtn" class="danger wide" type="button" data-i18n="nav.logout">
-          Chiqish
-        </button>
-      </aside>
+<div class="bg-static">
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+</div>
 
-      <main class="content">
-        <header class="topbar premium-panel">
-          <button id="topMenuBtn" class="top-menu-btn" type="button" aria-label="Menu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
-          <div>
-            <h1 data-i18n="dashboard.title">Dashboard</h1>
-            <p id="welcomeText" class="muted strong"></p>
-          </div>
-          <div class="lang-box vivid">
-            <label for="languageSelect" data-i18n="language.label">Til</label>
-            <select id="languageSelect">
-              <option value="uz">O'zbek</option>
-              <option value="en">English</option>
-              <option value="ru">Русский</option>
-            </select>
-          </div>
-        </header>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <section class="panel premium-panel neon-outline">
-          <div class="stats-grid">
-            <div class="stat">
-              <span class="stat-label" data-i18n="stats.today">Bugun</span>
-              <span id="todayTotal" class="stat-value">0</span>
-            </div>
-            <div class="stat">
-              <span class="stat-label" data-i18n="stats.month">Shu oy</span>
-              <span id="monthTotal" class="stat-value">0</span>
-            </div>
-            <div class="stat">
-              <span class="stat-label" data-i18n="stats.all">Jami</span>
-              <span id="allTotal" class="stat-value">0</span>
-            </div>
-          </div>
-        </section>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <p class="logo">Pul<span>Pulse</span></p>
+    <nav class="nav-links">
+      <a class="nav-link active" href="dashboard.html" data-i18n="nav.dashboard">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-link" href="expenses.html" data-i18n="nav.expenses">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        Xarajatlar
+      </a>
+    </nav>
+    <button id="logoutBtn" class="btn-logout" type="button" data-i18n="nav.logout">Chiqish</button>
+  </aside>
 
-        <section class="panel premium-panel">
-          <h2 data-i18n="expense.save">Saqlash</h2>
-          <form id="expenseForm" class="form-grid">
-            <label>
-              <span data-i18n="expense.date">Sana</span>
-              <input type="date" id="dateInput" required />
-            </label>
-            <label>
-              <span data-i18n="expense.amount">Summa</span>
-              <div class="amount-input-row">
-                <span class="currency-pill" id="currencyPreview">UZS</span>
-                <input type="number" id="amountInput" placeholder="0" min="0" step="any" required />
-              </div>
-            </label>
-            <label>
-              <span data-i18n="expense.currency">Valyuta</span>
-              <select id="currencyInput">
-                <option value="UZS" data-i18n="currency.uzs">so'm</option>
-                <option value="USD" data-i18n="currency.usd">USD</option>
-                <option value="RUB" data-i18n="currency.rub">RUB</option>
-                <option value="EUR" data-i18n="currency.eur">EUR</option>
-              </select>
-            </label>
-            <label>
-              <span data-i18n="expense.category">Kategoriya</span>
-              <select id="categoryInput" required>
-                <option value="food" data-i18n="category.food">Ovqat</option>
-                <option value="transport" data-i18n="category.transport">Transport</option>
-                <option value="utilities" data-i18n="category.utilities">Kommunal</option>
-                <option value="health" data-i18n="category.health">Sog'liq</option>
-                <option value="fun" data-i18n="category.fun">Ko'ngilochar</option>
-                <option value="other" data-i18n="category.other">Boshqa</option>
-              </select>
-            </label>
-            <label class="span-2">
-              <span data-i18n="expense.note">Izoh</span>
-              <input type="text" id="noteInput" placeholder="..." />
-            </label>
-            <div class="amount-summary span-3">
-              <p class="amount-summary-label" data-i18n="expense.previewLabel">Ko'rinish</p>
-              <div id="amountPreview" class="amount-preview-card">0 UZS</div>
-            </div>
-            <button class="glow-btn" type="submit" data-i18n="expense.save">Saqlash</button>
-          </form>
-        </section>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="topMenuBtn" type="button" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title">
+        <h1 data-i18n="dashboard.title">Dashboard</h1>
+        <p id="welcomeText"></p>
+      </div>
+      <div class="lang-box">
+        <label for="languageSelect" data-i18n="language.label">Til</label>
+        <select id="languageSelect">
+          <option value="uz">O'zbek</option>
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+        </select>
+      </div>
+    </header>
 
-        <section class="panel premium-panel">
-          <h2 data-i18n="budget.title">Oylik limit</h2>
-          <div class="budget-grid">
-            <input type="number" id="budgetInput" placeholder="Oylik limit" data-i18n-placeholder="budget.placeholder" min="0" />
-            <button id="saveBudgetBtn" class="glow-btn" type="button" data-i18n="budget.set">
-              Limitni o'rnatish
-            </button>
-          </div>
-          <div class="budget-bar">
-            <div id="budgetBar" class="budget-bar-fill"></div>
-          </div>
-          <p id="budgetUsedText" class="muted strong"></p>
-          <p id="budgetLeftText" class="muted strong"></p>
-        </section>
-
-        <section class="panel premium-panel neon-outline">
-          <h2 data-i18n="dashboard.insightTitle">Insight</h2>
-          <p id="challengeText" class="muted strong"></p>
-          <p id="streakText" class="muted strong"></p>
-          <p id="insightText" class="muted strong"></p>
-        </section>
-
-        <section class="panel premium-panel">
-          <h2 data-i18n="dashboard.recentTitle">Oxirgi xarajatlar</h2>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th data-i18n="table.date">Sana</th>
-                  <th data-i18n="table.category">Kategoriya</th>
-                  <th data-i18n="table.amount">Miqdor</th>
-                  <th data-i18n="table.note">Izoh</th>
-                  <th data-i18n="table.action">Amal</th>
-                </tr>
-              </thead>
-              <tbody id="recentBody"></tbody>
-            </table>
-          </div>
-          <p id="recentEmpty" class="muted"></p>
-        </section>
-      </main>
+    <div class="stats-row">
+      <div class="stat-card">
+        <p class="stat-label" data-i18n="stats.today">Bugun</p>
+        <p class="stat-value" id="todayTotal">0</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label" data-i18n="stats.month">Shu oy</p>
+        <p class="stat-value" id="monthTotal">0</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label" data-i18n="stats.all">Jami</p>
+        <p class="stat-value" id="allTotal">0</p>
+      </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <div class="panel">
+      <h2 data-i18n="expense.addTitle">Xarajat qo'shish</h2>
+      <div class="amount-hero">
+        <div class="amount-display" id="amountDisplay">0</div>
+        <p class="amount-hint" id="amountHint">Miqdorni kiriting</p>
+      </div>
+      <div class="pills-row" id="currencyPills">
+        <button class="pill active" data-currency="UZS">UZS</button>
+        <button class="pill" data-currency="USD">USD</button>
+        <button class="pill" data-currency="RUB">RUB</button>
+        <button class="pill" data-currency="EUR">EUR</button>
+      </div>
+      <div class="numpad" id="numpad">
+        <button class="num-btn" data-key="1">1</button>
+        <button class="num-btn" data-key="2">2</button>
+        <button class="num-btn" data-key="3">3</button>
+        <button class="num-btn" data-key="4">4</button>
+        <button class="num-btn" data-key="5">5</button>
+        <button class="num-btn" data-key="6">6</button>
+        <button class="num-btn" data-key="7">7</button>
+        <button class="num-btn" data-key="8">8</button>
+        <button class="num-btn" data-key="9">9</button>
+        <button class="num-btn" data-key=".">.</button>
+        <button class="num-btn zero" data-key="0">0</button>
+        <button class="num-btn del" data-key="del">⌫</button>
+      </div>
+      <div class="extra-fields">
+        <div class="field-group">
+          <label for="dateInput" data-i18n="expense.date">Sana</label>
+          <input type="date" id="dateInput" required />
+        </div>
+        <div class="field-group">
+          <label for="categoryInput" data-i18n="expense.category">Kategoriya</label>
+          <select id="categoryInput" required>
+            <option value="food">🍔 Ovqat</option>
+            <option value="transport">🚌 Transport</option>
+            <option value="utilities">💡 Kommunal</option>
+            <option value="health">❤️ Sog'liq</option>
+            <option value="fun">🎮 Ko'ngilochar</option>
+            <option value="other">📦 Boshqa</option>
+          </select>
+        </div>
+        <div class="field-group note-field">
+          <label for="noteInput" data-i18n="expense.note">Izoh (ixtiyoriy)</label>
+          <input type="text" id="noteInput" placeholder="Masalan: tushlik..." />
+        </div>
+      </div>
+      <input type="hidden" id="amountInput" />
+      <input type="hidden" id="currencyInput" value="UZS" />
+      <button class="btn-save" id="saveExpenseBtn" type="button" data-i18n="expense.save">Saqlash</button>
+    </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="js/firebase.js"></script>
-    <script src="js/core.js"></script>
-    <script src="js/dashboard.js"></script>
-  </body>
+    <div class="panel">
+      <h2 data-i18n="budget.title">Oylik limit</h2>
+      <div class="budget-row">
+        <input type="number" id="budgetInput" placeholder="Oylik limit kiriting" min="0" />
+        <button id="saveBudgetBtn" class="btn-set" type="button" data-i18n="budget.set">O'rnatish</button>
+      </div>
+      <div class="budget-track">
+        <div id="budgetBar" class="budget-fill" style="width:0%"></div>
+      </div>
+      <div class="budget-meta">
+        <span id="budgetUsedText"></span>
+        <span id="budgetLeftText"></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 data-i18n="dashboard.insightTitle">Insight</h2>
+      <div class="insight-chips">
+        <div class="insight-chip">
+          <span class="insight-icon">🔥</span>
+          <span class="insight-text" id="challengeText">—</span>
+        </div>
+        <div class="insight-chip">
+          <span class="insight-icon">⚡</span>
+          <span class="insight-text" id="streakText">—</span>
+        </div>
+        <div class="insight-chip">
+          <span class="insight-icon">💡</span>
+          <span class="insight-text" id="insightText">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 data-i18n="dashboard.recentTitle">Oxirgi xarajatlar</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="table.date">Sana</th>
+              <th data-i18n="table.category">Kategoriya</th>
+              <th data-i18n="table.amount">Miqdor</th>
+              <th data-i18n="table.note">Izoh</th>
+              <th data-i18n="table.action">Amal</th>
+            </tr>
+          </thead>
+          <tbody id="recentBody"></tbody>
+        </table>
+      </div>
+      <p id="recentEmpty" class="empty-state" style="display:none"></p>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/core.js"></script>
+<script>
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('topMenuBtn').addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+});
+
+document.getElementById('dateInput').valueAsDate = new Date();
+
+let amountStr = '';
+const display = document.getElementById('amountDisplay');
+const amountHidden = document.getElementById('amountInput');
+const amountHint = document.getElementById('amountHint');
+let selectedCurrency = 'UZS';
+
+function updateDisplay() {
+  const val = amountStr || '0';
+  const num = parseFloat(val);
+  if (!amountStr || num === 0) {
+    display.textContent = '0';
+    display.classList.remove('has-value');
+    amountHint.textContent = 'Miqdorni kiriting';
+  } else {
+    display.textContent = val + ' ' + selectedCurrency;
+    display.classList.add('has-value');
+    amountHint.textContent = '';
+  }
+  amountHidden.value = amountStr || '0';
+}
+
+document.getElementById('numpad').addEventListener('click', e => {
+  const btn = e.target.closest('.num-btn');
+  if (!btn) return;
+  const key = btn.dataset.key;
+  if (key === 'del') {
+    amountStr = amountStr.slice(0, -1);
+  } else if (key === '.') {
+    if (!amountStr.includes('.')) amountStr += '.';
+  } else {
+    if (amountStr.length >= 12) return;
+    amountStr += key;
+  }
+  updateDisplay();
+});
+
+document.getElementById('currencyPills').addEventListener('click', e => {
+  const pill = e.target.closest('.pill');
+  if (!pill) return;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  selectedCurrency = pill.dataset.currency;
+  document.getElementById('currencyInput').value = selectedCurrency;
+  updateDisplay();
+});
+
+document.getElementById('saveExpenseBtn').addEventListener('click', () => {
+  const amount = parseFloat(amountHidden.value);
+  const date = document.getElementById('dateInput').value;
+  const category = document.getElementById('categoryInput').value;
+  const note = document.getElementById('noteInput').value;
+  const currency = selectedCurrency;
+  if (!amount || amount <= 0) { showToast('Miqdor kiriting!'); return; }
+  if (!date) { showToast('Sana tanlang!'); return; }
+  const evt = new CustomEvent('addExpense', { detail: { amount, currency, category, note, date } });
+  document.dispatchEvent(evt);
+  amountStr = '';
+  document.getElementById('noteInput').value = '';
+  document.getElementById('dateInput').valueAsDate = new Date();
+  updateDisplay();
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+<script src="js/dashboard.js"></script>
+</body>
 </html>
