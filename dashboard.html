@@ -86,13 +86,13 @@
           <form id="expenseForm" class="form-grid">
             <label>
               <span data-i18n="expense.date">Sana</span>
-              <input type="date" id="dateInput" />
+              <input type="date" id="dateInput" required />
             </label>
             <label>
               <span data-i18n="expense.amount">Summa</span>
               <div class="amount-input-row">
                 <span class="currency-pill" id="currencyPreview">UZS</span>
-                <input type="number" id="amountInput" placeholder="0" />
+                <input type="number" id="amountInput" placeholder="0" min="0" step="any" required />
               </div>
             </label>
             <label>
@@ -106,7 +106,7 @@
             </label>
             <label>
               <span data-i18n="expense.category">Kategoriya</span>
-              <select id="categoryInput">
+              <select id="categoryInput" required>
                 <option value="food" data-i18n="category.food">Ovqat</option>
                 <option value="transport" data-i18n="category.transport">Transport</option>
                 <option value="utilities" data-i18n="category.utilities">Kommunal</option>
@@ -130,7 +130,7 @@
         <section class="panel premium-panel">
           <h2 data-i18n="budget.title">Oylik limit</h2>
           <div class="budget-grid">
-            <input type="number" id="budgetInput" placeholder="Oylik limit" data-i18n-placeholder="budget.placeholder" />
+            <input type="number" id="budgetInput" placeholder="Oylik limit" data-i18n-placeholder="budget.placeholder" min="0" />
             <button id="saveBudgetBtn" class="glow-btn" type="button" data-i18n="budget.set">
               Limitni o'rnatish
             </button>
